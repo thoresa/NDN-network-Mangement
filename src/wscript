@@ -1,0 +1,20 @@
+#!/usr/bin/env python
+# encoding: utf-8
+
+VERSION = '0.1'
+APPNAME = 'ndn-manage'
+
+top = '..'
+
+def build(bld):
+	if bld.env['WITH_NMIB']:
+		for app in bld.path.ant_glob('*.cpp'):
+			tag=app.change_ext('', '.cpp')
+			bld(features=['cxx', 'cxxprogram'], 
+				target=tag,
+				source=app, 
+				use='NDN_CXX',
+				includes="../src",
+				)
+		
+

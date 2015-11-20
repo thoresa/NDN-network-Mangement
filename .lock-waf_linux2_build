@@ -1,0 +1,8 @@
+argv = ['./waf', 'configure']
+environ = {'SSH_CLIENT': '10.60.103.178 58121 22', 'LOGNAME': 'peter', 'USER': 'peter', 'HOME': '/home/peter', 'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games', 'PS1': '\\[\\e[33;1m\\]\\u@\\h \\[\\e[35;1m\\]\\t \\[\\e[36;1m\\]\\w\\[\\e[0m\\]\\n\\[\\e[32;1m\\]$ \\[\\e[0m\\]', '_': './waf', 'LANG': 'en_US.UTF-8', 'TERM': 'vt100', 'SHELL': '/bin/bash', 'XDG_SESSION_COOKIE': '93f5ebee344dbe277db160b900000008-1447908553.757855-1762505585', 'SHLVL': '1', 'SSH_TTY': '/dev/pts/0', 'OLDPWD': '/home/peter/NDN/repo-ng', 'PWD': '/home/peter/NDN/repo-ng/nmib', 'MAIL': '/var/mail/peter', 'SSH_CONNECTION': '10.60.103.178 58121 10.60.148.157 22'}
+files = ['/home/peter/NDN/repo-ng/nmib/wscript']
+hash = '\n\xb0PI\x19\xf1<\x1c\x87_\x99\xb3\xa6\xa2te'
+options = {'files': '', 'jobs': 4, 'verbose': 0, 'progress_bar': 0, 'top': '', 'prefix': '/usr/local/', 'destdir': '', 'keep': 0, 'zones': '', 'colors': 'auto', 'distcheck_args': None, 'force': False, 'check_cxx_compiler': None, 'targets': '', 'out': ''}
+out_dir = '/home/peter/NDN/repo-ng/nmib/build'
+run_dir = '/home/peter/NDN/repo-ng/nmib'
+top_dir = '/home/peter/NDN/repo-ng/nmib'
