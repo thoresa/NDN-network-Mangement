@@ -9,5 +9,6 @@ top = '..'
 def build(bld):
     if bld.env['WITH_NMIB']:
         bld.recurse('src')
+        bld.recurse('test')
 
 

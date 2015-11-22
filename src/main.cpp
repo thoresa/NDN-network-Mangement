@@ -1,5 +1,6 @@
 #include <iostream>
-#include "communicator.hpp"
+#include "chunkType.hpp"
+
 using namespace std;
 
 int main()

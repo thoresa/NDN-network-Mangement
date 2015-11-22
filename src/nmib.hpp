@@ -9,6 +9,8 @@
 #include <ndn-cxx/face.hpp>
 #include <boost/asio.hpp>
 
+namespace ndnManage
+{
 namespace nmib
 {
 using std::shared_ptr;
@@ -16,7 +18,7 @@ using std::make_shared;
 using std::placeholders::_1;
 using std::placeholders::_2;
 
-class nmib:public ndn::noncopyable
+class NDNMib:public ndn::noncopyable
 {
 public:
 	class Error : public std::runtime_error
@@ -29,16 +31,26 @@ public:
 
 				}
 	};
-	nmib();
-	void read();
-	void add();
-	void update();
-	void notify();
-	virtual ~nmib(){};
+	NDNMib(ndn::Name nmibPrefix):
+	m_nmibPrefix(nmibPrefix)
+	{}
+	
+	NDNMib(std::string nmibPrefix)
+	{
+		m_nmibPrefix=ndn::Name(nmibPrefix);
+	}
+	
+	NDNMib(){}
+
+    void read(ndn::Name& name){};
+	void add(){};
+	void update(){};
+	void notify(){};
+	~NDNMib(){};
+
 private:
-	std::string m_path;
-	std::string m_prefix;
+	ndn::Name m_nmibPrefix;
 };
 }
-
+}
 #endif
