@@ -15,8 +15,7 @@ namespace nmib
 {
 using std::shared_ptr;
 using std::make_shared;
-using std::placeholders::_1;
-using std::placeholders::_2;
+using std::string;
 
 class NDNMib:public ndn::noncopyable
 {
@@ -31,25 +30,32 @@ public:
 
 				}
 	};
-	NDNMib(ndn::Name nmibPrefix):
-	m_nmibPrefix(nmibPrefix)
-	{}
-	
-	NDNMib(std::string nmibPrefix)
+	NDNMib(ndn::Name nmibRepoPrefix):
+	m_nmibRepoPrefix(nmibRepoPrefix)
 	{
-		m_nmibPrefix=ndn::Name(nmibPrefix);
+		std::cout<<m_nmibRepoPrefix<<std::endl;
 	}
 	
 	NDNMib(){}
 
     void read(ndn::Name& name){};
-	void add(){};
+	void insert(ndn::Name&, uint8_t*, int&);
 	void update(){};
 	void notify(){};
 	~NDNMib(){};
-
 private:
-	ndn::Name m_nmibPrefix;
+	void onInterest(const ndn::Name& prefix,
+					const ndn::Interest& interest,
+					const shared_ptr<ndn::Data> data);
+	void onRegisterSuccess(const ndn::Name&);
+	void onRegisterFailed(const ndn::Name&, const string);
+	void onCheckCommandResponse(const ndn::Interest&, ndn::Data&);
+	void onCheckCommandTimeout(const ndn::Interest&);
+	void startInsertCommand();
+private:
+	ndn::Name m_nmibRepoPrefix;
+	ndn::Name m_dataPrefix;
+	ndn::Face m_face;
 };
 }
 }

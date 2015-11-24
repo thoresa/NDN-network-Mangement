@@ -24,7 +24,10 @@ int main()
 	cout<<objectName<<endl;
 
 	chunkType::ChunkType* type = chunkType::typeFactory::createType(chunkType::DATACHUNKTYPE);
-	//ndnMib.read(objectname);
+	char buf[100] = "Hello World";
+	int size = strlen(buf);
+	ndnMib.insert(objectName, reinterpret_cast<uint8_t*>(buf), size);
+	//ndnMib.insert(objectName, buf, size);
 
 	return 0;
 }

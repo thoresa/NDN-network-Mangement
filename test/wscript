@@ -11,6 +11,7 @@ def build(bld):
 				source=app,
                 target='%s' % (str(app.change_ext('', '.cpp'))),
 				use='NDN_CXX',
+				stdlib='ndn-repo-objects',
 				includes="../src",
 				)
 
