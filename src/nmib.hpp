@@ -7,6 +7,7 @@
 #include <memory>
 
 #include <ndn-cxx/face.hpp>
+#include <ndn-cxx/security/key-chain.hpp>
 #include <boost/asio.hpp>
 
 namespace ndnManage
@@ -31,18 +32,22 @@ public:
 				}
 	};
 	NDNMib(ndn::Name nmibRepoPrefix):
-	m_nmibRepoPrefix(nmibRepoPrefix)
+	m_nmibRepoPrefix(nmibRepoPrefix),
+	m_timeout(0)
 	{
-		std::cout<<m_nmibRepoPrefix<<std::endl;
 	}
 	
 	NDNMib(){}
-
-    void read(ndn::Name& name){};
+	
+    const uint8_t* read(ndn::Name& name);
 	void insert(ndn::Name&, uint8_t*, int&);
 	void update(){};
 	void notify(){};
-	~NDNMib(){};
+	void start();
+	~NDNMib()
+	{
+		pthread_kill(m_pid, SIGKILL);
+	};
 private:
 	void onInterest(const ndn::Name& prefix,
 					const ndn::Interest& interest,
@@ -51,11 +56,20 @@ private:
 	void onRegisterFailed(const ndn::Name&, const string);
 	void onCheckCommandResponse(const ndn::Interest&, ndn::Data&);
 	void onCheckCommandTimeout(const ndn::Interest&);
+	void onData(const ndn::Interest&, const ndn::Data&);
+	void onTimeout(const ndn::Interest&);
 	void startInsertCommand();
-private:
+	void startProcessEvents(void);
+	static void* startProcessEventsHelper(void*);
+private:	
+	pthread_t m_pid;
 	ndn::Name m_nmibRepoPrefix;
+	ndn::KeyChain m_keyChain;
 	ndn::Name m_dataPrefix;
 	ndn::Face m_face;
+	ndn::Block m_content;
+	ndn::time::milliseconds m_interestLifetime;
+	ndn::time::milliseconds m_timeout;
 };
 }
 }

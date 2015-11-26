@@ -25,7 +25,6 @@ public:
 		switch(type)
 		{
 			case(DATACHUNKTYPE):
-				std::cout<<"data chunk type"<<std::endl;
 				return new DataChunkType();
 				break;
 			case(COMMANDTYPE):
