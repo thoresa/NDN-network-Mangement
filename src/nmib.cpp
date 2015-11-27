@@ -23,6 +23,8 @@ NDNMib::insert(ndn::Name& objectName, uint8_t* buf, int& size)
 							bind(&NDNMib::onInterest, this, _1, _2, data),
 							bind(&NDNMib::onRegisterSuccess, this, _1),
 							bind(&NDNMib::onRegisterFailed, this, _1, _2));
+	//wait signal
+	return;
 }
 
 const uint8_t*
@@ -35,8 +37,9 @@ NDNMib::read(ndn::Name& name)
     m_face.expressInterest(interest,
                            bind(&NDNMib::onData, this, _1, _2),
                            bind(&NDNMib::onTimeout, this, _1));
+	m_face.processEvents(m_timeout);
 	//wait signal
-	sleep(3);
+	sleep(2);
 	const uint8_t*  response = reinterpret_cast<const uint8_t*>(m_content.value());
 	return response;
 }
@@ -48,14 +51,13 @@ NDNMib::startProcessEvents()
 	{
 		while(true)
 		{
-			std::cout<<"process"<<std::endl;
 			m_face.processEvents();
 		}
 	}
 	catch(std::exception& e)
 	{
 		std::cout<<"e.what"<<std::endl;
-		//startProcessEvents(); //not return 
+		startProcessEvents(); //not return
 	}
 }
 
@@ -72,7 +74,6 @@ void
 NDNMib::start()
 {
 	pthread_create(&m_pid, NULL, &NDNMib::startProcessEventsHelper, this);
-//	pthread_join(pid, NULL);
 }
 
 void 
@@ -81,28 +82,27 @@ NDNMib::onInterest(const ndn::Name& prefix,
 				const shared_ptr<ndn::Data> data)
 {
 	m_face.put(*data);
+	//release signal for insert
 }
 
 void 
 NDNMib::onData(const ndn::Interest& interest, const ndn::Data& data)
 {
-	std::cout<<"onData"<<std::endl;
 	const ndn::Block& content = data.getContent();
 	m_content = content;
-	//release signal
+	//release signal for read
 }
 
 void
 NDNMib::onTimeout(const ndn::Interest& interest)
 {
-	//m_content = NULL;
+	//release signal for read
 }
 
 void 
 NDNMib::onRegisterSuccess(const ndn::Name&)
 {
 	startInsertCommand();	
-	std::cout<<"here"<<std::endl;
 }
 
 void
@@ -115,6 +115,8 @@ NDNMib::startInsertCommand()
 	m_face.expressInterest(commandInterest,
 						   bind(&NDNMib::onCheckCommandResponse, this, _1, _2),
 						   bind(&NDNMib::onCheckCommandTimeout, this, _1));
+	m_face.processEvents(m_timeout);
+	
 }
 
 void 
@@ -129,6 +131,7 @@ void
 NDNMib::onRegisterFailed(const ndn::Name& name, const string str)
 {
 	std::cout<<str<<std::endl;
+	//release signal for insert
 }
 }
 }

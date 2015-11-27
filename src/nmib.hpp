@@ -33,7 +33,8 @@ public:
 	};
 	NDNMib(ndn::Name nmibRepoPrefix):
 	m_nmibRepoPrefix(nmibRepoPrefix),
-	m_timeout(0)
+	m_timeout(-1),
+	m_pid(-1)
 	{
 	}
 	
@@ -46,7 +47,10 @@ public:
 	void start();
 	~NDNMib()
 	{
-		pthread_kill(m_pid, SIGKILL);
+		if(m_pid!=-1)
+		{
+			pthread_kill(m_pid, SIGKILL);
+		}
 	};
 private:
 	void onInterest(const ndn::Name& prefix,
