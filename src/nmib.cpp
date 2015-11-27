@@ -23,7 +23,8 @@ NDNMib::insert(ndn::Name& objectName, uint8_t* buf, int& size)
 							bind(&NDNMib::onInterest, this, _1, _2, data),
 							bind(&NDNMib::onRegisterSuccess, this, _1),
 							bind(&NDNMib::onRegisterFailed, this, _1, _2));
-	//wait signal
+	//wait signal for insert
+	sem_wait(&semaphoreForInsert);
 	return;
 }
 
@@ -38,8 +39,8 @@ NDNMib::read(ndn::Name& name)
                            bind(&NDNMib::onData, this, _1, _2),
                            bind(&NDNMib::onTimeout, this, _1));
 	m_face.processEvents(m_timeout);
-	//wait signal
-	sleep(2);
+	//wait signal for read
+	sem_wait(&semaphoreForRead);
 	const uint8_t*  response = reinterpret_cast<const uint8_t*>(m_content.value());
 	return response;
 }
@@ -56,7 +57,7 @@ NDNMib::startProcessEvents()
 	}
 	catch(std::exception& e)
 	{
-		std::cout<<"e.what"<<std::endl;
+		std::cout<<e.what()<<std::endl;
 		startProcessEvents(); //not return
 	}
 }
@@ -83,6 +84,7 @@ NDNMib::onInterest(const ndn::Name& prefix,
 {
 	m_face.put(*data);
 	//release signal for insert
+	sem_post(&semaphoreForInsert);
 }
 
 void 
@@ -91,12 +93,14 @@ NDNMib::onData(const ndn::Interest& interest, const ndn::Data& data)
 	const ndn::Block& content = data.getContent();
 	m_content = content;
 	//release signal for read
+	sem_post(&semaphoreForRead);
 }
 
 void
 NDNMib::onTimeout(const ndn::Interest& interest)
 {
 	//release signal for read
+	sem_post(&semaphoreForRead);
 }
 
 void 
@@ -132,6 +136,7 @@ NDNMib::onRegisterFailed(const ndn::Name& name, const string str)
 {
 	std::cout<<str<<std::endl;
 	//release signal for insert
+	sem_post(&semaphoreForInsert);
 }
 }
 }

@@ -9,6 +9,7 @@
 #include <ndn-cxx/face.hpp>
 #include <ndn-cxx/security/key-chain.hpp>
 #include <boost/asio.hpp>
+#include <semaphore.h>
 
 namespace ndnManage
 {
@@ -36,6 +37,8 @@ public:
 	m_timeout(-1),
 	m_pid(-1)
 	{
+		sem_init(&semaphoreForRead, 0, 0);
+		sem_init(&semaphoreForInsert, 0, 0);
 	}
 	
 	NDNMib(){}
@@ -65,7 +68,10 @@ private:
 	void startInsertCommand();
 	void startProcessEvents(void);
 	static void* startProcessEventsHelper(void*);
-private:	
+private:
+	sem_t semaphoreForRead;
+	sem_t semaphoreForInsert;
+
 	pthread_t m_pid;
 	ndn::Name m_nmibRepoPrefix;
 	ndn::KeyChain m_keyChain;
@@ -74,6 +80,8 @@ private:
 	ndn::Block m_content;
 	ndn::time::milliseconds m_interestLifetime;
 	ndn::time::milliseconds m_timeout;
+
+
 };
 }
 }

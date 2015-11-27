@@ -22,16 +22,14 @@ int main(int argc, char** argv)
 	ndn::Name objectName = ndn::Name(dType).append(dataName).append(infoType);
 	std::cout<<objectName<<std::endl;
 	chunkType::ChunkType* type = chunkType::typeFactory::createType(chunkType::DATACHUNKTYPE);
-	char buf[100] = "Hello Repo!";
+	char buf[100] = "Hello Repo !";
 	int size = strlen(buf);
-	/*ndnMib.start();
+	ndnMib.start();
 	std::cout<<"start insert data into repo"<<std::endl;
 	std::cout<<"the data is "<<buf<<std::endl;
 	ndnMib.insert(objectName, reinterpret_cast<uint8_t*>(buf), size);
-	sleep(5);
 	std::cout<<"start get data from repo"<<std::endl;
 	std::cout<<ndnMib.read(objectName)<<std::endl;
-	//ndnMib.insert(objectName, buf, size);
-	*/
+	
 	return 0;
 }
