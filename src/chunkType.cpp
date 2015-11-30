@@ -11,9 +11,13 @@ namespace ndnManage
 {
 namespace chunkType
 {
+
 int ChunkType::getTotalSize()
 {
 	return m_totalSize;
 }
+
+
+
 }
 }

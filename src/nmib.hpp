@@ -45,8 +45,9 @@ public:
 	
     const uint8_t* read(ndn::Name& name);
 	void insert(ndn::Name&, uint8_t*, int&);
-	void update(){};
-	void notify(){};
+	void delt(){}
+	void update(){}
+	void notify(){}
 	void start();
 	~NDNMib()
 	{

@@ -33,12 +33,14 @@ public:
 	vector<ndn::Name> getCacheNodes();
 	vector<ndn::Name> AddCacheNode(ndn::Name);
 	
+
 	virtual bool createChunk(){ return true;};
 	virtual void readChunk(){ return;};
 	virtual bool updateChunk(){ return true;};
 	virtual bool deleteChunk(){ return true;};
 	virtual bool changeOwner(){ return true;};
-
+	
+	virtual collectBornTime(string name) = 0;
 private:
 	ndn::Name m_manageName;
 	int m_totalSize;
