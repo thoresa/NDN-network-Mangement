@@ -22,11 +22,16 @@ EndpointType::queryFaces(string filter)
 void
 EndpointType::onData(const ndn::Interest& interest, ndn::Data& data)
 {
-	string fibMangeName = "/endpoint/localhost/nfd/faces";
 	const ndn::Block& content = data.getContent();
-	std::cout<<reinterpret_cast<const char*>(content.value());
-	return ;
+	//std::cout<<reinterpret_cast<const uint8_t*>(content.value());
+	const uint8_t* buf = reinterpret_cast<const uint8_t*>(content.value());
 	//call nmib to store it into the repo
+	//name: dataType/data_name/objectInfo
+	//name: /ndn/management/endpoint/localhost/nfd/faces
+	ndn::Name name("/ndn/management/endpoint/localhost/nfd/faces");
+	ndnMib.insert(name, buf, static_cast<int>(content.value_size()));
+
+	return ;
 }
 
 void

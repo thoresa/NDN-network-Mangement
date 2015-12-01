@@ -5,6 +5,7 @@
 #include <boost/date_time.hpp>
 #include <vector>
 #include <string>
+#include "nmib.hpp"
 
 namespace ndnManage
 {

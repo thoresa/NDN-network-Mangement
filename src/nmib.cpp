@@ -13,7 +13,7 @@ using std::placeholders::_1;
 using std::placeholders::_2;
 
 void 
-NDNMib::insert(ndn::Name& objectName, uint8_t* buf, int& size)
+NDNMib::insert(ndn::Name& objectName, const uint8_t* buf, int size)
 {
 	m_dataPrefix = objectName;
 	shared_ptr<ndn::Data> data = make_shared<ndn::Data>(m_dataPrefix);

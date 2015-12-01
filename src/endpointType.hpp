@@ -10,6 +10,13 @@ class EndpointType:public ChunkType
 {
 public:
 	void queryFaces(string filter);
+	EndpointType(string localNDNMibName):
+	ndnMib(localNDNMibName),
+	retryTime(3)
+	{
+		
+	}
+	EndpointType(){}
 private:
 	void onData(const ndn::Interest& interest, ndn::Data& data);
 	void onTimeout(const ndn::Interest& interest);
@@ -18,6 +25,7 @@ private:
 
 
 private:
+	nmib::NDNMib ndnMib;
 	ndn::Face m_face;
 	int retryTime;
 };
