@@ -4,12 +4,17 @@
 #include <ndn-cxx/face.hpp>
 #include <boost/date_time.hpp>
 #include <vector>
+#include <string>
 
 namespace ndnManage
 {
 using std::vector;
+using std::string;
+
 namespace chunkType
 {
+using std::placeholders::_1;
+using std::placeholders::_2;
 class ChunkType
 {
 public:
@@ -40,7 +45,7 @@ public:
 	virtual bool deleteChunk(){ return true;};
 	virtual bool changeOwner(){ return true;};
 	
-	virtual collectBornTime(string name) = 0;
+	virtual void collectBornTime(string name){};
 private:
 	ndn::Name m_manageName;
 	int m_totalSize;

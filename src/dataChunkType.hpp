@@ -11,6 +11,9 @@ public:
 	void collectBornTime(){}
 	void collectFib();
 	void collectFaces();
+
+private:
+	ndn::Face m_face;
 };
 }
 }

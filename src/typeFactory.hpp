@@ -4,7 +4,7 @@
 #include "chunkType.hpp"
 #include "dataChunkType.hpp"
 #include "commandType.hpp"
-#include "endPointType.hpp"
+#include "endpointType.hpp"
 
 namespace ndnManage
 {
@@ -31,7 +31,7 @@ public:
 				return new CommandType();
 				break;
 			case(ENDPOINTTYPE):
-				return new EndPointType();
+				return new EndpointType();
 				break;
 			default:
 				return NULL;
