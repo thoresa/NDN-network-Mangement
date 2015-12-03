@@ -21,14 +21,18 @@ class ChunkType
 public:
 	ChunkType(){}
 
+	ChunkType(string localNDNMibName):
+	ndnMib(localNDNMibName)
+	{}
+
 	ChunkType(ndn::Name name, vector<ndn::Name> cacheNodes):
-		m_manageName(name),
-		m_totalSize(-1),
-		m_cacheNodes(cacheNodes),
-		m_isLive(true),
-		m_bornTime(0),
-		m_dieTime(0)
-		{}
+	m_manageName(name),
+	m_totalSize(-1),
+	m_cacheNodes(cacheNodes),
+	m_isLive(true),
+	m_bornTime(0),
+	m_dieTime(0)
+	{}
 	
 	bool isLive()
 	{
@@ -40,15 +44,16 @@ public:
 	vector<ndn::Name> AddCacheNode(ndn::Name);
 	
 
+	virtual void queryInfoForChunk(NameType){};
 	virtual bool createChunk(){ return true;};
-	virtual void readChunk(){ return;};
 	virtual bool updateChunk(){ return true;};
 	virtual bool deleteChunk(){ return true;};
 	virtual bool changeOwner(){ return true;};
 	
 	virtual void collectBornTime(string name){};
-private:
+protected:
 	ndn::Name m_manageName;
+	nmib::NDNMib ndnMib;
 	int m_totalSize;
 	vector<ndn::Name> m_cacheNodes;
 	

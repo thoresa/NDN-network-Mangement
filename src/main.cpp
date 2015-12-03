@@ -11,7 +11,7 @@ using namespace ndnManage;
 
 int main(int argc, char** argv)
 {
-	string mibRepoPrefix = "/example/repo/1";
+	/*string mibRepoPrefix = "/example/repo/1";
 	ndn::Name mibNamePrefix(mibRepoPrefix);
 	nmib::NDNMib ndnMib(mibNamePrefix);
 	
@@ -30,6 +30,12 @@ int main(int argc, char** argv)
 	ndnMib.insert(objectName, reinterpret_cast<uint8_t*>(buf), size);
 	std::cout<<"start get data from repo"<<std::endl;
 	std::cout<<ndnMib.read(objectName)<<std::endl;
+	*/
+	chunkType::EndpointType type("/example/repo/1");
+	std::cout<<"here"<<std::endl;
 	
+	type.queryFaces("");
+	std::cout<<"here"<<std::endl;
+	sleep(5);
 	return 0;
 }

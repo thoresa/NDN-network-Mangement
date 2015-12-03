@@ -4,20 +4,22 @@ namespace ndnManage
 {
 namespace chunkType
 {
-const string nfdPrefix = "/localhost/nfd/faces/query";
+#ifndef MANAGE_NFD_PREFIX
+#define MANAGE_NFD_PREFIX
+#endif
 
 class EndpointType:public ChunkType
 {
 public:
 	void queryFaces(string filter);
-	EndpointType(string localNDNMibName):
-	ndnMib(localNDNMibName),
+	EndpointType():
 	retryTime(3)
 	{
-		
+		nfdPrefix = "/localhost/nfd/faces/list";
 	}
 	EndpointType(){}
 private:
+	void queryInfoForChunk(NameType){}
 	void onData(const ndn::Interest& interest, ndn::Data& data);
 	void onTimeout(const ndn::Interest& interest);
 	void queryFib(string name);
@@ -25,8 +27,9 @@ private:
 
 
 private:
-	nmib::NDNMib ndnMib;
+	string nfdPrefix;
 	ndn::Face m_face;
+	ndn::FaceManager faceManager;
 	int retryTime;
 };
 }

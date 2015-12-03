@@ -24,12 +24,34 @@ public:
 							  ndn::Name(dataName),
 							  ndn::Name(informationType));
 	}
-	
-private:
-	
-	const static map<string, ndn::Name> dataTypes;
-	const static map<string, ndn::Name> informationTypes;
+	static enum InformationTypes
+	{
+		//common
+		SIGNATURE,
+		CHUNKSIZE,
+		BORNTIME,
+		DIETIME,
 
+		//endpointType
+		HOST_INFO,
+		CHANNELS,
+		FACES,
+		FIB,
+		RIB,
+		STRATEGY,
+
+		//commandType
+		OPERATOR,
+		OPERAND,
+		ARGUMENTS,
+
+		//dataChunkType
+		CACHENODES,
+		ACCESSNUMBER,
+		LASTACCESSTIME,
+		OWNER,
+
+	};
 private:
 	static ndn::Name realFormatName(ndn::Name nmibPrefix,
  			   					    ndn::Name dataType,
@@ -43,40 +65,7 @@ private:
 					   .append(informationType);
 		return combinationName;
 	}
-	static map<string, ndn::Name> createDataTypesMap()
-	{
-		map<string, ndn::Name> realDataTypes;
-		realDataTypes["dataChunk"] = ndn::Name("datachunk");
-		realDataTypes["command"] = ndn::Name("command");
-		realDataTypes["endPoint"] = ndn::Name("endpoint");
-		return realDataTypes;
-	}
-	static map<string, ndn::Name> createInformationTypesMap()
-	{
-		map<string, ndn::Name> realInformationTypes;
-		
-		//common info
-		realInformationTypes["Owner"] = ndn::Name("owner");
-		realInformationTypes["BornTime"] = ndn::Name("borntime");
-		realInformationTypes["dieTime"] = ndn::Name("dietime");
-		realInformationTypes["cacheNodes"] = ndn::Name("cachenodes");
-
-		//data chunk info
-		realInformationTypes["dataChunkSize"] = ndn::Name("datachunksize");
-		
-		//command info
-		realInformationTypes["commandOperator"] = ndn::Name("commandOperator");
-
-		//endPoint info
-		realInformationTypes["endPointFIB"] = ndn::Name("endpointfib");
-
-		return realInformationTypes;
-	}
-	
 };
-
-const map<string, ndn::Name> NameType::dataTypes = NameType::createDataTypesMap();
-const map<string, ndn::Name> NameType::informationTypes = NameType::createInformationTypesMap();
 
 }
 }
