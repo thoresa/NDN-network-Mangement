@@ -5,6 +5,7 @@
 #include <boost/date_time.hpp>
 #include <vector>
 #include <string>
+#include "nameTypes.hpp"
 #include "nmib.hpp"
 
 namespace ndnManage
@@ -14,6 +15,7 @@ using std::string;
 
 namespace chunkType
 {
+using nameType::NameType;
 using std::placeholders::_1;
 using std::placeholders::_2;
 class ChunkType
@@ -44,7 +46,7 @@ public:
 	vector<ndn::Name> AddCacheNode(ndn::Name);
 	
 
-	virtual void queryInfoForChunk(NameType){};
+	virtual void queryInfoForChunk(NameType&, void*){};
 	virtual bool createChunk(){ return true;};
 	virtual bool updateChunk(){ return true;};
 	virtual bool deleteChunk(){ return true;};

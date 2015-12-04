@@ -24,6 +24,7 @@ NDNMib::insert(ndn::Name& objectName, const uint8_t* buf, int size)
 							bind(&NDNMib::onRegisterSuccess, this, _1),
 							bind(&NDNMib::onRegisterFailed, this, _1, _2));
 	//wait signal for insert
+	std::cout<<"insert"<<m_dataPrefix<<std::endl;
 	sem_wait(&semaphoreForInsert);
 	return;
 }
@@ -66,7 +67,6 @@ void*
 NDNMib::startProcessEventsHelper(void* args)
 {
 	((NDNMib*) args)->startProcessEvents();
-	return NULL;
 }
 
 //may be put it into the constructure
@@ -75,6 +75,7 @@ void
 NDNMib::start()
 {
 	pthread_create(&m_pid, NULL, &NDNMib::startProcessEventsHelper, this);
+	std::cout<<"start"<<std::endl;
 }
 
 void 

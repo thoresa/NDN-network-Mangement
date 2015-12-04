@@ -37,6 +37,8 @@ public:
 	m_timeout(-1),
 	m_pid(-1)
 	{
+		std::cout<<m_nmibRepoPrefix<<std::endl;
+		this->start();
 		sem_init(&semaphoreForRead, 0, 0);
 		sem_init(&semaphoreForInsert, 0, 0);
 	}

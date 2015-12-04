@@ -20,18 +20,18 @@ typedef enum
 class typeFactory
 {
 public:
-	static ChunkType* createType(CHUNKTYPE type)
+	static ChunkType* createType(CHUNKTYPE type, string name)
 	{
 		switch(type)
 		{
 			case(DATACHUNKTYPE):
-				return new DataChunkType();
+				return new DataChunkType(name);
 				break;
 			case(COMMANDTYPE):
-				return new CommandType();
+				return new CommandType(name);
 				break;
 			case(ENDPOINTTYPE):
-				return new EndpointType();
+				return new EndpointType(name);
 				break;
 			default:
 				return NULL;
