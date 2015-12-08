@@ -43,6 +43,7 @@ NDNMib::read(ndn::Name& name)
     m_face.expressInterest(interest,
                            bind(&NDNMib::onData, this, _1, _2),
                            bind(&NDNMib::onTimeout, this, _1));
+	m_face.processEvents();
 	//wait signal for read
 //	sem_wait(&semaphoreForRead);
 	const uint8_t*  response = reinterpret_cast<const uint8_t*>(m_content.value());
@@ -86,7 +87,6 @@ NDNMib::onInterest(const ndn::Name& prefix,
 				const ndn::Interest& interest,
 				const shared_ptr<ndn::Data> data)
 {
-	std::cout<<"onInterest"<<std::endl;
 	m_face.put(*data);
 	m_isFinished = true;
 
@@ -121,7 +121,7 @@ NDNMib::startInsertCommand()
 	repo::RepoCommandParameter parameters;
 	parameters.setName(m_dataPrefix);
 	
-	ndn::Interest commandInterest(ndn::Name(m_nmibRepoPrefix.append("insert").append(parameters.wireEncode())));
+	ndn::Interest commandInterest(ndn::Name(m_nmibRepoPrefix).append("insert").append(parameters.wireEncode()));
 	
 	commandInterest.setInterestLifetime(m_interestLifetime);
 	m_keyChain.sign(commandInterest);
@@ -156,7 +156,7 @@ NDNMib::startCheckCommand()
 	repo::RepoCommandParameter parameters;
 	parameters.setProcessId(m_processId);
 
-	ndn::Interest checkInterest(ndn::Name(m_nmibRepoPrefix.append("insert check").append(parameters.wireEncode())));
+	ndn::Interest checkInterest(ndn::Name(m_nmibRepoPrefix).append("insert check").append(parameters.wireEncode()));
 	checkInterest.setInterestLifetime(m_interestLifetime);
 	m_keyChain.sign(checkInterest);
 	m_face.expressInterest(checkInterest,
@@ -177,7 +177,6 @@ NDNMib::onCheckCommandResponse(const ndn::Interest& interest, ndn::Data& data)
 	if (m_isFinished) 
 	{
 		uint64_t insertCount = response.getInsertNum();
-		std::cout<<insertCount<<std::endl;
 		if(insertCount == 1)
 		{
 			m_face.getIoService().stop();

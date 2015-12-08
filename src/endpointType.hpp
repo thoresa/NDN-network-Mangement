@@ -23,6 +23,8 @@ public:
 	retryTime(3)
 	{
 		nfdPrefix = "/localhost/nfd/faces/list";
+		//format: /ndn/manage + host_name + faces		
+		m_facesPrefix = "/ndn/manage/ndn/cn/edu/tongji/hosta/faces";
 	}
 
 	void queryInfoForChunk(NameType& nameType, void* args)
@@ -80,6 +82,7 @@ private:
 	int retryTime;
 //	ndn::ValidatorNull m_validator;
 	shared_ptr<OBufferStream> m_buffer;
+	string m_facesPrefix;
 };
 }
 }

@@ -100,10 +100,8 @@ EndpointType::afterFetchData(const ndn::ConstBufferPtr& dataset)
 		//call nmib to store it into the repo
 		//name: dataType/data_name/objectInfo
 		//name: /ndn/management/endpoint/localhost/nfd/faces
-		ndn::Name name(ndn::Name("ndn/manage/localhost/faces").append(std::to_string(faceStatusStru.m_faceId)));
-		std::cout<<name<<std::endl;
+		ndn::Name name(ndn::Name(m_facesPrefix).append(std::to_string(faceStatusStru.m_faceId)));
 		ndnMib.insert(name, reinterpret_cast<const uint8_t*>(buf), static_cast<int>(block.size()));
-		std::cout<<name<<std::endl;
 	}
 
 }
