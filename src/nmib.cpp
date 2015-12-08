@@ -26,28 +26,24 @@ NDNMib::insert(ndn::Name& objectName, const uint8_t* buf, int size)
 										bind(&NDNMib::onInterest, this, _1, _2, data),
 										bind(&NDNMib::onRegisterSuccess, this, _1),
 										bind(&NDNMib::onRegisterFailed, this, _1, _2));
-	//wait signal for insert
 	m_face.processEvents();
-//	sem_wait(&semaphoreForInsert);
 	m_face.unsetInterestFilter(filterId);
 	return;
 }
 
-const uint8_t*
-NDNMib::read(ndn::Name& name)
+const int
+NDNMib::read(ndn::Name& name, shared_ptr<const uint8_t*> response)
 { 
 	ndn::Interest interest(name);
     interest.setInterestLifetime(m_interestLifetime);
-    interest.setMustBeFresh(true);
-
+    interest.setMustBeFresh(false);
     m_face.expressInterest(interest,
                            bind(&NDNMib::onData, this, _1, _2),
                            bind(&NDNMib::onTimeout, this, _1));
 	m_face.processEvents();
-	//wait signal for read
-//	sem_wait(&semaphoreForRead);
-	const uint8_t*  response = reinterpret_cast<const uint8_t*>(m_content.value());
-	return response;
+	response = make_shared<const uint8_t*>(m_content.value());
+	int size = m_content.value_size();
+	return size;
 }
 
 void
@@ -62,7 +58,7 @@ NDNMib::startProcessEvents()
 	}
 	catch(std::exception& e)
 	{
-			//std::cout<<e.what()<<std::endl;
+		//	std::cout<<e.what()<<std::endl;
 		//	startProcessEvents(); //not return
 	}
 }
@@ -89,8 +85,6 @@ NDNMib::onInterest(const ndn::Name& prefix,
 {
 	m_face.put(*data);
 	m_isFinished = true;
-
-	//sem_post(&semaphoreForInsert);
 }
 
 void 
@@ -99,14 +93,13 @@ NDNMib::onData(const ndn::Interest& interest, const ndn::Data& data)
 	const ndn::Block& content = data.getContent();
 	m_content = content;
 	//release signal for read
-	sem_post(&semaphoreForRead);
 }
 
 void
 NDNMib::onTimeout(const ndn::Interest& interest)
 {
 	//release signal for read
-	sem_post(&semaphoreForRead);
+	std::cout<<"onTimeout"<<interest.getName()<<std::endl;
 }
 
 void 

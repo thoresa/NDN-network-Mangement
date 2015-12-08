@@ -12,17 +12,20 @@ using nameType::NameType;
 
 int main(int argc, char** argv)
 {
-	string mibRepoPrefix = "/example/repo/1";
-	ndn::Name mibNamePrefix(mibRepoPrefix);
-	nmib::NDNMib ndnMib(mibNamePrefix);
+	nmib::NDNMib ndnMib;
 	
-	string dType = "ndn";
-	string dataName = "manage";
+	//string dType = "ndn";
+	//string dataName = "manage";
 	string infoType(argv[1]);
-	ndn::Name objectName = ndn::Name(dType).append(dataName).append(infoType);
+	ndn::Name objectName = ndn::Name(infoType);
 	std::cout<<"start get data from repo"<<std::endl;
-	std::cout<<objectName<<std::endl;
-	std::cout<<ndnMib.read(objectName)<<std::endl;
+	std::shared_ptr<const uint8_t*> buf;
+	int size = ndnMib.read(objectName, buf);
+	std::cout<<size<<std::endl;
+	std::streambuf* ob;
+	ob=std::cout.rdbuf();
+	std::ostream out(ob);
+	out.write(buf.get(), size);
 
 /*	chunkType::ChunkType* type = chunkType::typeFactory::createType(chunkType::ENDPOINTTYPE, "/example/repo/1");
 	char* filter = "";

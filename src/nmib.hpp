@@ -50,11 +50,12 @@ public:
 		sem_init(&semaphoreForInsert, 0, 0);
 	}
 	
-	NDNMib():
-	m_scheduler(m_face.getIoService())
+	NDNMib():		
+	m_scheduler(m_face.getIoService()),
+	m_interestLifetime(DEFAULT_INTEREST_LIFETIME)
 	{}
 	
-    const uint8_t* read(ndn::Name& name);
+    const int read(ndn::Name& name, shared_ptr<const uint8_t*>);
 	void insert(ndn::Name&, const uint8_t*, int);
 	void delt(){}
 	void update(){}
