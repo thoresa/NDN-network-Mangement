@@ -11,21 +11,25 @@ namespace nmib
 
 using std::placeholders::_1;
 using std::placeholders::_2;
-
+using std::bind;
 void 
 NDNMib::insert(ndn::Name& objectName, const uint8_t* buf, int size)
 {
 	m_dataPrefix = objectName;
 	shared_ptr<ndn::Data> data = make_shared<ndn::Data>(m_dataPrefix);
+	
 	data->setContent(buf, size);
+	data->setFreshnessPeriod(m_freshnessPeriod);
 	m_keyChain.signWithSha256(*data);
-	m_face.setInterestFilter(m_dataPrefix,
-							bind(&NDNMib::onInterest, this, _1, _2, data),
-							bind(&NDNMib::onRegisterSuccess, this, _1),
-							bind(&NDNMib::onRegisterFailed, this, _1, _2));
+	
+	const ndn::RegisteredPrefixId* filterId = m_face.setInterestFilter(m_dataPrefix,
+										bind(&NDNMib::onInterest, this, _1, _2, data),
+										bind(&NDNMib::onRegisterSuccess, this, _1),
+										bind(&NDNMib::onRegisterFailed, this, _1, _2));
 	//wait signal for insert
-	std::cout<<"insert"<<m_dataPrefix<<std::endl;
-	sem_wait(&semaphoreForInsert);
+	m_face.processEvents();
+//	sem_wait(&semaphoreForInsert);
+	m_face.unsetInterestFilter(filterId);
 	return;
 }
 
@@ -39,9 +43,8 @@ NDNMib::read(ndn::Name& name)
     m_face.expressInterest(interest,
                            bind(&NDNMib::onData, this, _1, _2),
                            bind(&NDNMib::onTimeout, this, _1));
-	m_face.processEvents(m_timeout);
 	//wait signal for read
-	sem_wait(&semaphoreForRead);
+//	sem_wait(&semaphoreForRead);
 	const uint8_t*  response = reinterpret_cast<const uint8_t*>(m_content.value());
 	return response;
 }
@@ -51,15 +54,15 @@ NDNMib::startProcessEvents()
 {
 	try
 	{
-		while(true)
-		{
+		while(false)
+		{	
 			m_face.processEvents();
 		}
 	}
 	catch(std::exception& e)
 	{
-		std::cout<<e.what()<<std::endl;
-		startProcessEvents(); //not return
+			//std::cout<<e.what()<<std::endl;
+		//	startProcessEvents(); //not return
 	}
 }
 
@@ -67,6 +70,7 @@ void*
 NDNMib::startProcessEventsHelper(void* args)
 {
 	((NDNMib*) args)->startProcessEvents();
+	return NULL;
 }
 
 //may be put it into the constructure
@@ -75,7 +79,6 @@ void
 NDNMib::start()
 {
 	pthread_create(&m_pid, NULL, &NDNMib::startProcessEventsHelper, this);
-	std::cout<<"start"<<std::endl;
 }
 
 void 
@@ -83,9 +86,11 @@ NDNMib::onInterest(const ndn::Name& prefix,
 				const ndn::Interest& interest,
 				const shared_ptr<ndn::Data> data)
 {
+	std::cout<<"onInterest"<<std::endl;
 	m_face.put(*data);
-	//release signal for insert
-	sem_post(&semaphoreForInsert);
+	m_isFinished = true;
+
+	//sem_post(&semaphoreForInsert);
 }
 
 void 
@@ -115,29 +120,90 @@ NDNMib::startInsertCommand()
 {
 	repo::RepoCommandParameter parameters;
 	parameters.setName(m_dataPrefix);
-
-	ndn::Interest commandInterest(ndn::Name(m_nmibRepoPrefix.append("insert").append(parameters.wireEncode())));
-	m_face.expressInterest(commandInterest,
-						   bind(&NDNMib::onCheckCommandResponse, this, _1, _2),
-						   bind(&NDNMib::onCheckCommandTimeout, this, _1));
-	m_face.processEvents(m_timeout);
 	
+	ndn::Interest commandInterest(ndn::Name(m_nmibRepoPrefix.append("insert").append(parameters.wireEncode())));
+	
+	commandInterest.setInterestLifetime(m_interestLifetime);
+	m_keyChain.sign(commandInterest);
+	m_face.expressInterest(commandInterest,
+						   std::bind(&NDNMib::onInsertCommandResponse, this, _1, _2),
+						   std::bind(&NDNMib::onInsertCommandTimeout, this, _1));
 }
 
-void 
+
+void
+NDNMib::onInsertCommandResponse(const ndn::Interest& interest, ndn::Data& data)
+{
+	repo::RepoCommandResponse response(data.getContent().blockFromValue());
+	int statusCode = response.getStatusCode();
+	if(statusCode >= 400)
+	{
+		//error 
+	}
+	m_processId = response.getProcessId();
+	m_scheduler.scheduleEvent(m_checkPeriod,
+							std::bind(&NDNMib::startCheckCommand, this));
+}
+
+void
+NDNMib::onInsertCommandTimeout(const ndn::Interest& interest)
+{
+
+}
+void
+NDNMib::startCheckCommand()
+{
+	repo::RepoCommandParameter parameters;
+	parameters.setProcessId(m_processId);
+
+	ndn::Interest checkInterest(ndn::Name(m_nmibRepoPrefix.append("insert check").append(parameters.wireEncode())));
+	checkInterest.setInterestLifetime(m_interestLifetime);
+	m_keyChain.sign(checkInterest);
+	m_face.expressInterest(checkInterest,
+                         bind(&NDNMib::onCheckCommandResponse, this, _1, _2),
+                         bind(&NDNMib::onCheckCommandTimeout, this, _1));
+}
+
+void
 NDNMib::onCheckCommandResponse(const ndn::Interest& interest, ndn::Data& data)
 {
+	repo::RepoCommandResponse response(data.getContent().blockFromValue());
+	int statusCode = response.getStatusCode();
+	if (statusCode >= 400)
+	{
+		//error
+	}
+
+	if (m_isFinished) 
+	{
+		uint64_t insertCount = response.getInsertNum();
+		std::cout<<insertCount<<std::endl;
+		if(insertCount == 1)
+		{
+			m_face.getIoService().stop();
+			return;
+		}
+	}
+	m_scheduler.scheduleEvent(m_checkPeriod,
+                           std::bind(&NDNMib::startCheckCommand, this));
 }
+
+
+
 void 
 NDNMib::onCheckCommandTimeout(const ndn::Interest& interest)
 {
+	
 }
 void 
 NDNMib::onRegisterFailed(const ndn::Name& name, const string str)
 {
-	std::cout<<str<<std::endl;
 	//release signal for insert
 	sem_post(&semaphoreForInsert);
 }
+
+
+
+
 }
 }

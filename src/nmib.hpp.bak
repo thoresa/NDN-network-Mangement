@@ -10,10 +10,9 @@
 #include <ndn-cxx/security/key-chain.hpp>
 #include <boost/asio.hpp>
 #include <semaphore.h>
-#include <ndn-cxx/util/scheduler.hpp>
+
 #define DEFAULT_FRESH_PERIOD 10000
-#define DEFAULT_INTEREST_LIFETIME 4000
-#define DEFAULT_CHECK_PERIOD 1000
+
 namespace ndnManage
 {
 namespace nmib
@@ -37,22 +36,17 @@ public:
 	};
 	NDNMib(ndn::Name nmibRepoPrefix):
 	m_nmibRepoPrefix(nmibRepoPrefix),
-	m_freshnessPeriod(DEFAULT_FRESH_PERIOD),
 	m_timeout(-1),
-	m_isFinished(false),
-	m_checkPeriod(DEFAULT_CHECK_PERIOD),
-	m_processId(0),
-	m_scheduler(m_face.getIoService()),
-	m_interestLifetime(DEFAULT_INTEREST_LIFETIME)
+	m_pid(-1),
+	m_freshnessPeriod(DEFAULT_FRESH_PERIOD)
 	{
+		std::cout<<m_nmibRepoPrefix<<std::endl;
 		//this->start();
 		sem_init(&semaphoreForRead, 0, 0);
 		sem_init(&semaphoreForInsert, 0, 0);
 	}
 	
-	NDNMib():
-	m_scheduler(m_face.getIoService())
-	{}
+	NDNMib(){}
 	
     const uint8_t* read(ndn::Name& name);
 	void insert(ndn::Name&, const uint8_t*, int);
@@ -62,6 +56,11 @@ public:
 	void start();
 	~NDNMib()
 	{
+		if(m_pid!=-1)
+		{
+		//	pthread_kill(m_pid, SIGKILL);
+	//		m_face.getIoService().stop();
+		}
 	};
 private:
 	void onInterest(const ndn::Name& prefix,
@@ -69,15 +68,11 @@ private:
 					const shared_ptr<ndn::Data> data);
 	void onRegisterSuccess(const ndn::Name&);
 	void onRegisterFailed(const ndn::Name&, const string);
+	void onCheckCommandResponse(const ndn::Interest&, ndn::Data&);
+	void onCheckCommandTimeout(const ndn::Interest&);
 	void onData(const ndn::Interest&, const ndn::Data&);
 	void onTimeout(const ndn::Interest&);
 	void startInsertCommand();
-	void onInsertCommandResponse(const ndn::Interest& interest, ndn::Data& data);
-	void onInsertCommandTimeout(const ndn::Interest& interest);
-	void startCheckCommand();
-	void onCheckCommandResponse(const ndn::Interest&, ndn::Data&);
-	void onCheckCommandTimeout(const ndn::Interest&);
-	
 	void startProcessEvents();
 	static void* startProcessEventsHelper(void*);
 private:
@@ -90,13 +85,11 @@ private:
 	ndn::Name m_dataPrefix;
 	ndn::Face m_face;
 	ndn::Block m_content;
+	ndn::time::milliseconds m_interestLifetime;
 	ndn::time::milliseconds m_freshnessPeriod;
 	ndn::time::milliseconds m_timeout;
-	bool m_isFinished;
-	ndn::time::milliseconds m_checkPeriod;
-	uint64_t m_processId;
-	ndn::Scheduler m_scheduler;
-	ndn::time::milliseconds m_interestLifetime;
+
+
 };
 }
 }

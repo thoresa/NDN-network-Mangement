@@ -23,8 +23,8 @@ class ChunkType
 public:
 	ChunkType(){}
 
-	ChunkType(string localNDNMibName):
-	ndnMib(localNDNMibName)
+	ChunkType(string name):
+	localNDNMibName(name)
 	{}
 
 	ChunkType(ndn::Name name, vector<ndn::Name> cacheNodes):
@@ -55,7 +55,7 @@ public:
 	virtual void collectBornTime(string name){};
 protected:
 	ndn::Name m_manageName;
-	nmib::NDNMib ndnMib;
+	string localNDNMibName;
 	int m_totalSize;
 	vector<ndn::Name> m_cacheNodes;
 	
