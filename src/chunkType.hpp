@@ -46,7 +46,9 @@ public:
 	vector<ndn::Name> AddCacheNode(ndn::Name);
 	
 
-	virtual void queryInfoForChunk(NameType&, void*){};
+	virtual void collectInfoForChunk(NameType&, void*){};
+	virtual std::string queryInfoForChunk(NameType&, string& name, void*){return NULL;}
+
 	virtual bool createChunk(){ return true;};
 	virtual bool updateChunk(){ return true;};
 	virtual bool deleteChunk(){ return true;};

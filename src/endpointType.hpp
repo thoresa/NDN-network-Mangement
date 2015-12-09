@@ -27,7 +27,7 @@ public:
 		m_facesPrefix = "/ndn/manage/ndn/cn/edu/tongji/hosta/faces";
 	}
 
-	void queryInfoForChunk(NameType& nameType, void* args)
+	void collectInfoForChunk(NameType& nameType, void* args)
 	{
 		switch(nameType.infoType)
 		{
@@ -38,7 +38,7 @@ public:
 
 				break;
 			case nameType::FACES:
-				this->queryFaces(static_cast<char*>(args));
+				this->collectFaces(static_cast<char*>(args));
 				break;
 			case nameType::FIB:
 
@@ -56,12 +56,46 @@ public:
 		}
 	}
 
+	std::string queryInfoForChunk(NameType& nameType, string& name, void* args)
+	{
+		std::string result;
+		switch(nameType.infoType)
+		{
+			case nameType::HOST_INFO:
+			
+				break;
+			case nameType::CHANNELS:
+
+				break;
+			case nameType::FACES:
+				result = this->queryFaces(name).toString();
+				break;
+			case nameType::FIB:
+
+				break;
+			case nameType::RIB:
+
+				break;
+			case nameType::STRATEGY:
+
+				break;
+			default:
+				//std::cerr<<"no such info type"<<std::endl;
+				break;
+			
+		}
+		return result;
+	}
+
 private:
+private:
+	void collectFaces(string filter);
+	nameType::FaceStatusStruct queryFaces(string& name);
+
 	void onData(const ndn::Interest& interest, ndn::Data& data);
 	void onTimeout(const ndn::Interest& interest);
 	void queryHostInfo(){};
 	void queryChannels(){};
-	void queryFaces(string filter);
 	void queryFIB(){};
 	void queryRIB(){};
 	void queryStrategy(){};

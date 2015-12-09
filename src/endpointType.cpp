@@ -11,7 +11,7 @@ namespace chunkType
 using namespace nameType;
 
 void
-EndpointType::queryFaces(string filter)
+EndpointType::collectFaces(string filter)
 {
 	try
 	{
@@ -33,6 +33,16 @@ EndpointType::queryFaces(string filter)
 	}
 }
 
+nameType::FaceStatusStruct
+EndpointType::queryFaces(string& name)
+{
+	ndn::Name queryName = ndn::Name(name);
+	nmib::NDNMib ndnMib;
+	int size;
+	const uint8_t* buf = ndnMib.read(queryName, size);
+	nameType::FaceStatusStruct fstatus = nameType::Serialization::DeSerialize(reinterpret_cast<const char*>(buf));
+	return fstatus;
+}
 void
 EndpointType::afterFetchData(const ndn::ConstBufferPtr& dataset)
 {

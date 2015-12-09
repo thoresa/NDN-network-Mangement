@@ -61,8 +61,10 @@ struct FACESTATUSSTRUCT
 
 	ndn::time::milliseconds  m_expirationPeriod;
 	
+	const std::string toString();
 	friend std::ostream& operator<<(std::ostream&, const struct FACESTATUSSTRUCT&);
 	friend std::istream& operator>>(std::istream&, struct FACESTATUSSTRUCT&);
+
 };
 
 typedef struct FACESTATUSSTRUCT FaceStatusStruct;

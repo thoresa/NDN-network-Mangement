@@ -35,5 +35,13 @@ std::istream& operator>>(std::istream& in, struct FACESTATUSSTRUCT& currentStatu
 	>>currentStatus.m_OutBytes;
 	return in;
 }
+
+const std::string 
+FaceStatusStruct::toString()
+{
+	std::ostringstream os;
+	os<<*this;
+	return os.str();
+}
 }
 }
