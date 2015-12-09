@@ -21,11 +21,12 @@ class Serialization
 {
 public:
 	static const char* 
-	Serialize(const FaceStatusStruct& fs)
+	Serialize(const FaceStatusStruct& fs, int& size)
 	{
 		std::ostringstream os;
 		os<<fs;
 		std::string content = os.str();
+		size = content.length();
 		return content.c_str();
 	}
 

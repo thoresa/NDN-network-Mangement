@@ -4,7 +4,7 @@
 #include "../src/nameTypes.hpp"
 #include "../src/chunkType.hpp"
 #include "../src/typeFactory.hpp"
-
+#include "serialization.hpp"
 
 using namespace std;
 using namespace ndnManage;
@@ -22,18 +22,17 @@ int main(int argc, char** argv)
 	const uint8_t* buf;
 	int size=0;
 	buf = ndnMib.read(objectName, size);
-	std::cout<<size<<std::endl;
 	std::streambuf* ob;
 	ob=std::cout.rdbuf();
 	std::ostream out(ob);
-	out.write(reinterpret_cast<const char*>(buf), size);
-
-/*	chunkType::ChunkType* type = chunkType::typeFactory::createType(chunkType::ENDPOINTTYPE, "/example/repo/1");
+	nameType::FaceStatusStruct fs;
+	fs = nameType::Serialization::DeSerialize(reinterpret_cast<const char*>(buf));
+	cout<<fs<<endl;
+/*
+	chunkType::ChunkType* type = chunkType::typeFactory::createType(chunkType::ENDPOINTTYPE, "/example/repo/1");
 	char* filter = "";
 	NameType nType;
 	nType.infoType = nameType::FACES;
 	type->queryInfoForChunk(nType, filter);
-*/
-
-	return 0;
+*/	return 0;
 }

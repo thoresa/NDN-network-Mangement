@@ -16,6 +16,7 @@ void
 NDNMib::insert(ndn::Name& objectName, const uint8_t* buf, int size)
 {
 	m_dataPrefix = objectName;
+	std::cout<<buf<<std::endl;
 	shared_ptr<ndn::Data> data = make_shared<ndn::Data>(m_dataPrefix);
 	
 	data->setContent(buf, size);

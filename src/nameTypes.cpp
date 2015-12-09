@@ -5,6 +5,7 @@ namespace ndnManage
 {
 namespace nameType
 { 
+
 std::ostream& operator<<(std::ostream& out, const struct FACESTATUSSTRUCT& currentStatus)
 {
 	out<<currentStatus.m_faceId<<" "
