@@ -55,7 +55,7 @@ public:
 	m_interestLifetime(DEFAULT_INTEREST_LIFETIME)
 	{}
 	
-    const int read(ndn::Name& name, shared_ptr<const uint8_t*>);
+    const uint8_t* read(ndn::Name& name, int&);
 	void insert(ndn::Name&, const uint8_t*, int);
 	void delt(){}
 	void update(){}

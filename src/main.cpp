@@ -19,13 +19,14 @@ int main(int argc, char** argv)
 	string infoType(argv[1]);
 	ndn::Name objectName = ndn::Name(infoType);
 	std::cout<<"start get data from repo"<<std::endl;
-	std::shared_ptr<const uint8_t*> buf;
-	int size = ndnMib.read(objectName, buf);
+	const uint8_t* buf;
+	int size=0;
+	buf = ndnMib.read(objectName, size);
 	std::cout<<size<<std::endl;
 	std::streambuf* ob;
 	ob=std::cout.rdbuf();
 	std::ostream out(ob);
-	out.write(buf.get(), size);
+	out.write(reinterpret_cast<const char*>(buf), size);
 
 /*	chunkType::ChunkType* type = chunkType::typeFactory::createType(chunkType::ENDPOINTTYPE, "/example/repo/1");
 	char* filter = "";

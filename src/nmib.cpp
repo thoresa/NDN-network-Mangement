@@ -31,8 +31,8 @@ NDNMib::insert(ndn::Name& objectName, const uint8_t* buf, int size)
 	return;
 }
 
-const int
-NDNMib::read(ndn::Name& name, shared_ptr<const uint8_t*> response)
+const uint8_t*
+NDNMib::read(ndn::Name& name, int& size)
 { 
 	ndn::Interest interest(name);
     interest.setInterestLifetime(m_interestLifetime);
@@ -41,9 +41,9 @@ NDNMib::read(ndn::Name& name, shared_ptr<const uint8_t*> response)
                            bind(&NDNMib::onData, this, _1, _2),
                            bind(&NDNMib::onTimeout, this, _1));
 	m_face.processEvents();
-	response = make_shared<const uint8_t*>(m_content.value());
-	int size = m_content.value_size();
-	return size;
+	const uint8_t* response = m_content.value();
+	size = m_content.value_size();
+	return response;
 }
 
 void
