@@ -11,7 +11,7 @@ namespace chunkType
 using namespace nameType;
 
 void
-EndpointType::collectFaces(string filter)
+EndpointType::collectFaces(string& name, string filter)
 {
 	try
 	{
@@ -20,7 +20,8 @@ EndpointType::collectFaces(string filter)
 		ndn::Interest interest(realName);
 		interest.setChildSelector(1);
 		interest.setMustBeFresh(true);
-
+		///ndn/manage/endpoint/endpointName/faces
+		m_facesPrefix = name;
 		ndn::util::SegmentFetcher::fetch(m_face, interest,
 							  util::DontVerifySegment(),
 							  bind(&EndpointType::afterFetchData, this, _1),

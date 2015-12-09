@@ -24,10 +24,10 @@ public:
 	{
 		nfdPrefix = "/localhost/nfd/faces/list";
 		//format: /ndn/manage + host_name + faces		
-		m_facesPrefix = "/ndn/manage/ndn/cn/edu/tongji/hosta/faces";
+		m_facesPrefix = "/ndn/manage/localhost/faces";
 	}
 
-	void collectInfoForChunk(NameType& nameType, void* args)
+	void collectInfoForChunk(NameType& nameType, string& name, void* args)
 	{
 		switch(nameType.infoType)
 		{
@@ -38,7 +38,7 @@ public:
 
 				break;
 			case nameType::FACES:
-				this->collectFaces(static_cast<char*>(args));
+				this->collectFaces(name, static_cast<char*>(args));
 				break;
 			case nameType::FIB:
 
@@ -89,7 +89,7 @@ public:
 
 private:
 private:
-	void collectFaces(string filter);
+	void collectFaces(string& name, string filter);
 	nameType::FaceStatusStruct queryFaces(string& name);
 
 	void onData(const ndn::Interest& interest, ndn::Data& data);

@@ -13,9 +13,9 @@ using nameType::NameType;
 int main(int argc, char** argv)
 {
 	chunkType::ChunkType* type = chunkType::typeFactory::createType(chunkType::ENDPOINTTYPE, "/example/repo/1");
+	string infoType(argv[2]);
 	if(strcmp(argv[1], "query") == 0)
 	{
-		string infoType(argv[2]);
 		char* filter = "";
 		NameType nType;
 		nType.infoType = nameType::FACES;
@@ -27,7 +27,7 @@ int main(int argc, char** argv)
 		char* filter = "";
 		NameType nType;
 		nType.infoType = nameType::FACES;
-		type->collectInfoForChunk(nType, filter);
+		type->collectInfoForChunk(nType, infoType, filter);
 	}
 	return 0;
 }
