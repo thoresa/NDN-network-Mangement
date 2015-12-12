@@ -44,6 +44,23 @@ enum INFORMATIONTYPES
 	OWNER
 };
 
+struct HOSTINFO
+{
+	float m_cpuRate;
+	float m_memoryRate;
+	float m_IORate;
+	int totalMemory;
+	
+	string hostName;
+	bool isVM;
+	string vmHost;
+
+	const std::string toString();
+
+	friend std::ostream& operator<<(std::ostream&, const struct HOSTINFO&);
+	friend std::istream& operator>>(std::istream&, struct HOSTINFO&);
+	
+};
 
 struct FACESTATUSSTRUCT
 {
@@ -68,40 +85,9 @@ struct FACESTATUSSTRUCT
 };
 
 typedef struct FACESTATUSSTRUCT FaceStatusStruct;
+typedef struct HOSTINFO HostInfo;
 
-/*
-class Serialization
-{
-public:
-	static const char* 
-	Serialize(const FaceStatusStruct& fs)
-	{
-		std::ostringstream os;
-		boost::archive::binary_oarchive archive(os);
-		archive<<fs;
-		std::string content = os.str();
-		return content.c_str();
-	}
-	
-};
-*/
 
-/*
-std::ostream& operator<<(std::ostream& out, struct FACESTATUSSTRUCT& currentStatus)
-{
-	out<<currentStatus.m_faceId<<" "
-	<<currentStatus.m_remoteUri<<" "
-	<<currentStatus.m_localUri<<" "
-	<<currentStatus.m_InInterests<<" "
-	<<currentStatus.m_InDatas<<" "
-	<<currentStatus.m_OutInterests<<" "
-	<<currentStatus.m_OutDatas<<" "
-	<<currentStatus.m_InBytes<<" "
-	<<currentStatus.m_OutBytes;
-	return out;
-
-}
-*/
 class NameType
 {
 public:

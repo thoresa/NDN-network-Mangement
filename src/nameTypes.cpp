@@ -36,6 +36,32 @@ std::istream& operator>>(std::istream& in, struct FACESTATUSSTRUCT& currentStatu
 	return in;
 }
 
+std::ostream& operator<<(std::ostream& out, const struct HOSTINFO& hostInfo)
+{
+	out<<hostInfo.m_cpuRate<<" "
+	<<hostInfo.m_memoryRate<<" "
+	<<hostInfo.m_IORate<<" "
+	<<hostInfo.totalMemory<<" "
+	
+	<<hostInfo.hostName<<" "
+	<<hostInfo.isVM<<" "
+	<<hostInfo.vmHost;
+	return out;
+}
+
+std::istream& operator>>(std::istream& in, struct HOSTINFO& hostInfo)
+{
+	in>>hostInfo.m_cpuRate
+	>>hostInfo.m_memoryRate
+	>>hostInfo.m_IORate
+	>>hostInfo.totalMemory
+	
+	>>hostInfo.hostName
+	>>hostInfo.isVM
+	>>hostInfo.vmHost;
+	return in;
+}
+
 const std::string 
 FaceStatusStruct::toString()
 {
@@ -43,5 +69,14 @@ FaceStatusStruct::toString()
 	os<<*this;
 	return os.str();
 }
+
+const std::string 
+HostInfo::toString()
+{
+	std::ostringstream os;
+	os<<*this;
+	return os.str();
+}
+
 }
 }

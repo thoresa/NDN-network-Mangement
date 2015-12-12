@@ -17,10 +17,11 @@ namespace nameType
 using std::map;
 using std::string;
 
+template <class T>
 class Serialization
 {
 public:
-	static const char* 
+	/*static const char* 
 	Serialize(const FaceStatusStruct& fs, int& size)
 	{
 		std::ostringstream os;
@@ -40,6 +41,28 @@ public:
 		is>>fs;
 		return fs;
 	}
+	*/
+	static const char* 
+	Serialize(const T& fs, int& size)
+	{
+		std::ostringstream os;
+		os<<fs;
+		std::string content = os.str();
+		size = content.length();
+		return content.c_str();
+	}
+
+
+	static T
+	DeSerialize(const char* buf)
+	{
+		string tmpBufStr(buf);
+		T fs;
+		std::istringstream is(tmpBufStr);
+		is>>fs;
+		return fs;
+	}
+	
 	
 };
 

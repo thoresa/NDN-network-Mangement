@@ -23,8 +23,6 @@ public:
 	retryTime(3)
 	{
 		nfdPrefix = "/localhost/nfd/faces/list";
-		//format: /ndn/manage + host_name + faces		
-		m_facesPrefix = "/ndn/manage/localhost/faces";
 	}
 
 	void collectInfoForChunk(NameType& nameType, string& name, void* args)
@@ -32,7 +30,7 @@ public:
 		switch(nameType.infoType)
 		{
 			case nameType::HOST_INFO:
-			
+				this->collectHostInfo(name, static_cast<char*>(args));	
 				break;
 			case nameType::CHANNELS:
 
@@ -91,6 +89,8 @@ private:
 private:
 	void collectFaces(string& name, string filter);
 	nameType::FaceStatusStruct queryFaces(string& name);
+	
+	void collectHostInfo(string& name, string args);
 
 	void onData(const ndn::Interest& interest, ndn::Data& data);
 	void onTimeout(const ndn::Interest& interest);
@@ -116,7 +116,10 @@ private:
 	int retryTime;
 //	ndn::ValidatorNull m_validator;
 	shared_ptr<OBufferStream> m_buffer;
+	//format: /ndn/manage + host_name + /faces		
 	string m_facesPrefix;
+	//format: /ndn/manage + host_name + /hostinfo
+	string m_hostInfoName;
 };
 }
 }

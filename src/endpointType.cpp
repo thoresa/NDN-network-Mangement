@@ -20,7 +20,7 @@ EndpointType::collectFaces(string& name, string filter)
 		ndn::Interest interest(realName);
 		interest.setChildSelector(1);
 		interest.setMustBeFresh(true);
-		///ndn/manage/endpoint/endpointName/faces
+		
 		m_facesPrefix = name;
 		ndn::util::SegmentFetcher::fetch(m_face, interest,
 							  util::DontVerifySegment(),
@@ -34,6 +34,20 @@ EndpointType::collectFaces(string& name, string filter)
 	}
 }
 
+void
+EndpointType::collectHostInfo(string& name, string filter)
+{
+	try
+	{
+		m_hostInfoName = name;
+		
+	}
+	catch(std::exception& e)
+	{
+		
+	}
+}
+
 nameType::FaceStatusStruct
 EndpointType::queryFaces(string& name)
 {
@@ -41,7 +55,7 @@ EndpointType::queryFaces(string& name)
 	nmib::NDNMib ndnMib;
 	int size;
 	const uint8_t* buf = ndnMib.read(queryName, size);
-	nameType::FaceStatusStruct fstatus = nameType::Serialization::DeSerialize(reinterpret_cast<const char*>(buf));
+	nameType::FaceStatusStruct fstatus = nameType::Serialization<FaceStatusStruct>::DeSerialize(reinterpret_cast<const char*>(buf));
 	return fstatus;
 }
 void
@@ -83,7 +97,7 @@ EndpointType::afterFetchData(const ndn::ConstBufferPtr& dataset)
 		//name: /ndn/manage/dataType/data_name/objectInfo
 		ndn::Name name(ndn::Name(m_facesPrefix).append(std::to_string(faceStatusStru.m_faceId)));
 		int size;
-		const char* buf = nameType::Serialization::Serialize(faceStatusStru, size);	
+		const char* buf = nameType::Serialization<FaceStatusStruct>::Serialize(faceStatusStru, size);	
 		ndnMib.insert(name, reinterpret_cast<const uint8_t*>(buf), size);
 	}
 
