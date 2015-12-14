@@ -7,10 +7,10 @@ namespace chunkType
 float
 collectCpuOccupyRate();
 
-std::map<string, int>
+float
 collectMemoryOccupyRate();
 
-float
+std::map<string, int>
 collectIOBandwidth();
 
 }
