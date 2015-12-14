@@ -29,7 +29,7 @@ public:
 	{
 		switch(nameType.infoType)
 		{
-			case nameType::HOST_INFO:
+			case nameType::HOSTINFO:
 				this->collectHostInfo(name, static_cast<char*>(args));	
 				break;
 			case nameType::CHANNELS:
@@ -61,7 +61,7 @@ public:
 		std::shared_ptr<nameType::BaseType> result;
 		switch(nameType.infoType)
 		{
-			case nameType::HOST_INFO:
+			case nameType::HOSTINFO:
 			
 				break;
 			case nameType::CHANNELS:

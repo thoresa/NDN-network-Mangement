@@ -40,8 +40,7 @@ std::ostream& operator<<(std::ostream& out, const struct HOSTINFO& hostInfo)
 {
 	out<<hostInfo.m_cpuRate<<" "
 	<<hostInfo.m_memoryRate<<" "
-	<<hostInfo.m_IORate<<" "
-	<<hostInfo.totalMemory<<" "
+	<<hostInfo.m_IOBandwidth<<" "
 	
 	<<hostInfo.hostName<<" "
 	<<hostInfo.isVM<<" "
@@ -53,8 +52,7 @@ std::istream& operator>>(std::istream& in, struct HOSTINFO& hostInfo)
 {
 	in>>hostInfo.m_cpuRate
 	>>hostInfo.m_memoryRate
-	>>hostInfo.m_IORate
-	>>hostInfo.totalMemory
+	>>hostInfo.m_IOBandwidth
 	
 	>>hostInfo.hostName
 	>>hostInfo.isVM

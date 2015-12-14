@@ -18,15 +18,15 @@ int main(int argc, char** argv)
 	{
 		char* filter = "";
 		NameType nType;
-		nType.infoType = nameType::FACES;
+		nType.infoType = nameType::HOSTINFO;
 		std::string faceStatus = type->queryInfoForChunk(nType, infoType, filter)->toString();
-		std::cout<<"face:"<<faceStatus<<std::endl;
+		std::cout<<"hostInfo:"<<faceStatus<<std::endl;
 	}
 	else
 	{
 		char* filter = "";
 		NameType nType;
-		nType.infoType = nameType::FACES;
+		nType.infoType = nameType::HOSTINFO;
 		type->collectInfoForChunk(nType, infoType, filter);
 	}
 	return 0;

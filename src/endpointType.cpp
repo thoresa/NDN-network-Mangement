@@ -1,5 +1,6 @@
 #include "endpointType.hpp"
 #include "serialization.hpp"
+#include "collectHostInformation.hpp"
 #include <vector>
 using std::vector;
 
@@ -40,7 +41,14 @@ EndpointType::collectHostInfo(string& name, string filter)
 	try
 	{
 		m_hostInfoName = name;
-		
+		std::cout<<collectCpuOccupyRate()<<std::endl;
+		std::cout<<collectMemoryOccupyRate()<<std::endl;
+		std::map<string, int> res = collectIOBandwidth();
+		for(std::map<string, int>::iterator iter = res.begin(); iter!=res.end(); iter++)
+		{
+			std::cout<<iter->first<<" "<<iter->second<<std::endl;
+		}
+
 	}
 	catch(std::exception& e)
 	{

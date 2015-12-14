@@ -25,7 +25,7 @@ enum INFORMATIONTYPES
 	DIETIME,
 
 	//EndpointType
-	HOST_INFO,
+	HOSTINFO,
 	CHANNELS,
 	FACES,
 	FIB,
@@ -55,8 +55,7 @@ struct HOSTINFO:public BASETYPE
 {
 	float m_cpuRate;
 	float m_memoryRate;
-	float m_IORate;
-	int totalMemory;
+	int m_IOBandwidth;
 	
 	string hostName;
 	bool isVM;
