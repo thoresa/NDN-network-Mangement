@@ -44,7 +44,14 @@ enum INFORMATIONTYPES
 	OWNER
 };
 
-struct HOSTINFO
+struct BASETYPE
+{
+public:
+	const virtual std::string toString() = 0;
+
+};
+
+struct HOSTINFO:public BASETYPE
 {
 	float m_cpuRate;
 	float m_memoryRate;
@@ -54,15 +61,20 @@ struct HOSTINFO
 	string hostName;
 	bool isVM;
 	string vmHost;
-
-	const std::string toString();
+	
+	const virtual std::string toString()
+	{
+		std::ostringstream os;
+		os<<*this;
+		return os.str();
+	}
 
 	friend std::ostream& operator<<(std::ostream&, const struct HOSTINFO&);
 	friend std::istream& operator>>(std::istream&, struct HOSTINFO&);
 	
 };
 
-struct FACESTATUSSTRUCT
+struct FACESTATUSSTRUCT:public BASETYPE
 {
 	uint64_t  m_faceId;
 
@@ -78,12 +90,19 @@ struct FACESTATUSSTRUCT
 
 	ndn::time::milliseconds  m_expirationPeriod;
 	
-	const std::string toString();
+	const virtual std::string toString()
+	{
+		std::ostringstream os;
+		os<<*this;
+		return os.str();
+	}
+	
 	friend std::ostream& operator<<(std::ostream&, const struct FACESTATUSSTRUCT&);
 	friend std::istream& operator>>(std::istream&, struct FACESTATUSSTRUCT&);
 
 };
 
+typedef struct BASETYPE BaseType;
 typedef struct FACESTATUSSTRUCT FaceStatusStruct;
 typedef struct HOSTINFO HostInfo;
 

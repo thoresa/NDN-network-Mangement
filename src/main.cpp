@@ -19,7 +19,7 @@ int main(int argc, char** argv)
 		char* filter = "";
 		NameType nType;
 		nType.infoType = nameType::FACES;
-		std::string faceStatus = type->queryInfoForChunk(nType, infoType, filter);
+		std::string faceStatus = type->queryInfoForChunk(nType, infoType, filter)->toString();
 		std::cout<<"face:"<<faceStatus<<std::endl;
 	}
 	else

@@ -47,7 +47,8 @@ public:
 	
 
 	virtual void collectInfoForChunk(NameType&, string& name, void*){};
-	virtual std::string queryInfoForChunk(NameType&, string& name, void*){return NULL;}
+	virtual std::shared_ptr<nameType::BaseType>
+	queryInfoForChunk(NameType&, string& name, void*){return NULL;}
 
 	virtual bool createChunk(){ return true;};
 	virtual bool updateChunk(){ return true;};

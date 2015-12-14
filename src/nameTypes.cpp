@@ -62,21 +62,5 @@ std::istream& operator>>(std::istream& in, struct HOSTINFO& hostInfo)
 	return in;
 }
 
-const std::string 
-FaceStatusStruct::toString()
-{
-	std::ostringstream os;
-	os<<*this;
-	return os.str();
-}
-
-const std::string 
-HostInfo::toString()
-{
-	std::ostringstream os;
-	os<<*this;
-	return os.str();
-}
-
 }
 }

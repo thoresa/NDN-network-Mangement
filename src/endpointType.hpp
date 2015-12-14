@@ -54,9 +54,11 @@ public:
 		}
 	}
 
-	std::string queryInfoForChunk(NameType& nameType, string& name, void* args)
+	std::shared_ptr<nameType::BaseType>
+	queryInfoForChunk(NameType& nameType, string& name, void* args)
 	{
-		std::string result;
+	//	nameType::BaseType* result;
+		std::shared_ptr<nameType::BaseType> result;
 		switch(nameType.infoType)
 		{
 			case nameType::HOST_INFO:
@@ -66,7 +68,7 @@ public:
 
 				break;
 			case nameType::FACES:
-				result = this->queryFaces(name).toString();
+				result = std::make_shared<nameType::FaceStatusStruct>(this->queryFaces(name));
 				break;
 			case nameType::FIB:
 
