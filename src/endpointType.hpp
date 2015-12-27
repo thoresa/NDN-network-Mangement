@@ -29,13 +29,21 @@ public:
 	{
 		switch(nameType.infoType)
 		{
+			case nameType::CPURATE:
+				name = name+"/cpurate";
+				std::cout<<name<<std::endl;
+				this->collectCpuRate(name, static_cast<char*>(args));	
+				break;
+
 			case nameType::HOSTINFO:
+				name = name+"/hostinfo";
 				this->collectHostInfo(name, static_cast<char*>(args));	
 				break;
-			case nameType::CHANNELS:
 
+			case nameType::CHANNELS:
 				break;
 			case nameType::FACES:
+				name = name+"/faces";
 				this->collectFaces(name, static_cast<char*>(args));
 				break;
 			case nameType::FIB:
@@ -57,12 +65,15 @@ public:
 	std::shared_ptr<nameType::BaseType>
 	queryInfoForChunk(NameType& nameType, string& name, void* args)
 	{
-	//	nameType::BaseType* result;
 		std::shared_ptr<nameType::BaseType> result;
 		switch(nameType.infoType)
 		{
+			case nameType::CPURATE:
+//				name = name+"/cpurate";
+				result = std::make_shared<nameType::CpuRateStruct>(this->queryCpuRate(name));
+				break;
 			case nameType::HOSTINFO:
-			
+				result = std::make_shared<nameType::HostInfo>(this->queryHostInfo(name));
 				break;
 			case nameType::CHANNELS:
 
@@ -88,22 +99,24 @@ public:
 	}
 
 private:
-private:
 	void collectFaces(string& name, string filter);
 	nameType::FaceStatusStruct queryFaces(string& name);
 	
 	void collectHostInfo(string& name, string args);
+	nameType::HostInfo queryHostInfo(string& name);
+
+	
+	void collectCpuRate(string& name, string args);
+	nameType::CpuRateStruct queryCpuRate(string& name);
 
 	void onData(const ndn::Interest& interest, ndn::Data& data);
 	void onTimeout(const ndn::Interest& interest);
-	void queryHostInfo(){};
 	void queryChannels(){};
 	void queryFIB(){};
 	void queryRIB(){};
 	void queryStrategy(){};
 	
 	void queryFib(string name);
-	void queryHostInfo(string name);
 	
 	
 void afterFetchData(const ndn::ConstBufferPtr& dataset);

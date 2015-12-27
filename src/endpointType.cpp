@@ -41,20 +41,70 @@ EndpointType::collectHostInfo(string& name, string filter)
 	try
 	{
 		m_hostInfoName = name;
-		std::cout<<collectCpuOccupyRate()<<std::endl;
-		std::cout<<collectMemoryOccupyRate()<<std::endl;
-		std::map<string, int> res = collectIOBandwidth();
-		for(std::map<string, int>::iterator iter = res.begin(); iter!=res.end(); iter++)
+		float cpuRate = collectCpuOccupyRate();
+		float memoryRate = collectMemoryOccupyRate();
+		std::map<string, int> IOBandwidth = collectIOBandwidth();
+
+		string hostName = "TODO";
+		/*
+		for(std::map<string, int>::iterator iter = IOBandwidth.begin(); iter!=IOBandwidth.end(); iter++)
 		{
 			std::cout<<iter->first<<" "<<iter->second<<std::endl;
 		}
-
+		*/
+		
+		nameType::HostInfo hostInfo;
+		hostInfo.assign(cpuRate, memoryRate, IOBandwidth, hostName);
+		
+		nmib::NDNMib ndnMib(localNDNMibName);
+		ndn::Name hostInfoName = ndn::Name(m_hostInfoName);
+		int size;
+		const char* buf = nameType::Serialization<nameType::HostInfo>::Serialize(hostInfo, size);	
+		ndnMib.insert(hostInfoName, reinterpret_cast<const uint8_t*>(buf), size);
 	}
 	catch(std::exception& e)
 	{
-		
+		std::cout<<e.what()<<std::endl;
 	}
 }
+
+void
+EndpointType::collectCpuRate(string& name, string filter)
+{
+	try
+	{
+		float cpuRate = collectCpuOccupyRate();
+		string cpuRateStr = std::to_string(cpuRate);
+
+		nmib::NDNMib ndnMib(localNDNMibName);
+		ndn::Name cpuRateName = ndn::Name(name);
+		int size = cpuRateStr.length();
+		const char* buf = cpuRateStr.c_str();	
+		ndnMib.insert(cpuRateName, reinterpret_cast<const uint8_t*>(buf), size);
+		
+	}
+	catch(std::exception& e)
+	{
+		std::cout<<e.what()<<std::endl;
+	}
+}
+
+
+nameType::CpuRateStruct
+EndpointType::queryCpuRate(string& name)
+{
+	ndn::Name queryName = ndn::Name(name);
+	nmib::NDNMib ndnMib;
+	int size;
+	const uint8_t* buf = ndnMib.read(queryName, size);
+
+	std::string cpurateStr(reinterpret_cast<const char*>(buf));
+	nameType::CpuRateStruct cpurate;
+	cpurate.setCpuRate(atof(cpurateStr.c_str()));
+	
+	return cpurate;
+}
+
 
 nameType::FaceStatusStruct
 EndpointType::queryFaces(string& name)
@@ -66,6 +116,18 @@ EndpointType::queryFaces(string& name)
 	nameType::FaceStatusStruct fstatus = nameType::Serialization<FaceStatusStruct>::DeSerialize(reinterpret_cast<const char*>(buf));
 	return fstatus;
 }
+
+nameType::HostInfo
+EndpointType::queryHostInfo(string& name)
+{
+	ndn::Name queryName = ndn::Name(name);
+	nmib::NDNMib ndnMib;
+	int size;
+	const uint8_t* buf = ndnMib.read(queryName, size);
+	nameType::HostInfo hostInfo = nameType::Serialization<HostInfo>::DeSerialize(reinterpret_cast<const char*>(buf));
+	return hostInfo;
+}
+
 void
 EndpointType::afterFetchData(const ndn::ConstBufferPtr& dataset)
 {
@@ -138,11 +200,6 @@ EndpointType::queryFib(string name)
 
 }
 
-void 
-EndpointType::queryHostInfo(string name)
-{
-
-}
 
 
 }

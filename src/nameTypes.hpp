@@ -25,6 +25,8 @@ enum INFORMATIONTYPES
 	DIETIME,
 
 	//EndpointType
+	CPURATE,
+
 	HOSTINFO,
 	CHANNELS,
 	FACES,
@@ -48,19 +50,104 @@ struct BASETYPE
 {
 public:
 	const virtual std::string toString() = 0;
+	virtual string getElementByKey(int key = 0)
+	{
+		return NULL;
+	}
 
 };
+
+struct CPURATESTRUCT:public BASETYPE
+{
+private:
+	float m_cpurate;
+public:
+	float getCpuRate()
+	{
+		return m_cpurate;
+	}
+	void setCpuRate(float rate)
+	{
+		m_cpurate = rate;		
+	}
+	const virtual std::string toString()
+	{
+		return std::to_string(getCpuRate());
+	}
+	virtual string getElementByKey(int key=0)
+	{
+		return toString();
+	}
+
+};
+
 
 struct HOSTINFO:public BASETYPE
 {
 	float m_cpuRate;
 	float m_memoryRate;
-	int m_IOBandwidth;
-	
-	string hostName;
-	bool isVM;
-	string vmHost;
-	
+	std::map<string, int> m_IOBandwidth;
+	string m_hostName;
+
+	bool m_isVM;
+	string m_vmHost;
+private:
+	float getCpuRate()
+	{
+		return m_cpuRate;
+	}
+	float getMemoryRate()
+	{
+		return m_memoryRate;
+	}
+	int getIOBandwidth(string eth)
+	{
+		return m_IOBandwidth[eth];
+	}
+public:
+	static enum 
+	{
+		CPURATE=0,
+		MEMORYRATE,
+		IOBANDWIDTH
+	}HostInfoElementKeys;
+	void assign(float cpuRate,
+				float memoryRate,
+				std::map<string, int>& IOBandwidth,
+				string& hostName,
+
+				bool isVM = false,
+				string vmHost = "")
+	{
+		m_cpuRate = cpuRate;
+		m_memoryRate = memoryRate;
+		m_IOBandwidth = IOBandwidth;	
+		m_hostName = hostName;
+
+		m_isVM = isVM;
+		m_vmHost = vmHost;
+		
+
+	}
+	virtual string getElementByKey(int key)
+	{
+		string element;
+		switch(key)
+		{
+			case(CPURATE):
+				element = std::to_string(getCpuRate());
+				break;
+			case(MEMORYRATE):
+				element = std::to_string(getMemoryRate());
+				break;
+			case(IOBANDWIDTH):
+				element = std::to_string(getIOBandwidth("eth0"));
+				break;
+			default:
+				break;
+		} 
+		return  element;
+	}
 	const virtual std::string toString()
 	{
 		std::ostringstream os;
@@ -102,6 +189,7 @@ struct FACESTATUSSTRUCT:public BASETYPE
 };
 
 typedef struct BASETYPE BaseType;
+typedef struct CPURATESTRUCT CpuRateStruct;
 typedef struct FACESTATUSSTRUCT FaceStatusStruct;
 typedef struct HOSTINFO HostInfo;
 

@@ -13,21 +13,24 @@ using nameType::NameType;
 int main(int argc, char** argv)
 {
 	chunkType::ChunkType* type = chunkType::typeFactory::createType(chunkType::ENDPOINTTYPE, "/example/repo/1");
-	string infoType(argv[2]);
+	string prefix(argv[2]);
+
 	if(strcmp(argv[1], "query") == 0)
 	{
 		char* filter = "";
 		NameType nType;
-		nType.infoType = nameType::HOSTINFO;
-		std::string faceStatus = type->queryInfoForChunk(nType, infoType, filter)->toString();
-		std::cout<<"hostInfo:"<<faceStatus<<std::endl;
+		nType.infoType = nameType::CPURATE;
+		std::string value = type->queryInfoForChunk(nType, prefix, filter)->toString();
+		std::cout<<"hostInfo:"<<value<<std::endl;
 	}
 	else
 	{
 		char* filter = "";
 		NameType nType;
-		nType.infoType = nameType::HOSTINFO;
-		type->collectInfoForChunk(nType, infoType, filter);
+		nType.infoType = nameType::CPURATE;
+		std::cout<<"prefix"<<prefix<<std::endl;
+		type->collectInfoForChunk(nType, prefix, filter);
 	}
 	return 0;
 }
+
