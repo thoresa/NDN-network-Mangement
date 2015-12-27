@@ -20,16 +20,27 @@ int main(int argc, char** argv)
 		char* filter = "";
 		NameType nType;
 		nType.infoType = nameType::CPURATE;
+		std::cout<<"query data name: "<<prefix<<std::endl;
 		std::string value = type->queryInfoForChunk(nType, prefix, filter)->toString();
-		std::cout<<"hostInfo:"<<value<<std::endl;
+		std::cout<<value<<std::endl;
 	}
-	else
+	else if(strcmp(argv[1], "collect") == 0)
 	{
 		char* filter = "";
 		NameType nType;
 		nType.infoType = nameType::CPURATE;
-		std::cout<<"prefix"<<prefix<<std::endl;
+		std::cout<<"collect data name: "<<prefix<<std::endl;
 		type->collectInfoForChunk(nType, prefix, filter);
+	}
+	else if(strcmp(argv[1], "delete") == 0)
+	{
+		std::cout<<"delete data name: "<<prefix<<std::endl;
+		type->deleteInfoInMib(prefix);
+
+	}
+	else 
+	{
+
 	}
 	return 0;
 }

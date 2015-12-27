@@ -1,4 +1,6 @@
 #include <iostream>
+#include <ndn-cxx/util/random.hpp>
+#include <boost/random.hpp>
 #include "nmib.hpp"
 #include "../../src/repo-command-parameter.hpp"
 #include "../../src/repo-command-response.hpp"
@@ -12,11 +14,14 @@ namespace nmib
 using std::placeholders::_1;
 using std::placeholders::_2;
 using std::bind;
+namespace random = ndn::random;
 
 void 
 NDNMib::insert(ndn::Name& objectName, const uint8_t* buf, int size)
 {
 	m_dataPrefix = objectName;
+	delt(m_dataPrefix);
+	
 	shared_ptr<ndn::Data> data = make_shared<ndn::Data>(m_dataPrefix);
 	
 	data->setContent(buf, size);
@@ -32,12 +37,35 @@ NDNMib::insert(ndn::Name& objectName, const uint8_t* buf, int size)
 	return;
 }
 
+void 
+NDNMib::delt(ndn::Name& name)
+{
+	ndn::Name deleteCommandName(m_nmibRepoPrefix);
+	
+	repo::RepoCommandParameter deleteParameter;
+	static boost::random::mt19937_64 gen;
+	static boost::random::uniform_int_distribution<uint64_t> dist(0, 0xFFFFFFFFFFFFFFFFLL);
+	deleteParameter.setProcessId(dist(gen));
+	deleteParameter.setName(name);
+	
+	deleteCommandName.append("delete").append(deleteParameter.wireEncode());
+
+	ndn::Interest deleteInterest(deleteCommandName);
+	m_keyChain.sign(deleteInterest);
+	
+	m_face.expressInterest(deleteInterest,
+						   std::bind(&NDNMib::onDeleteData, this, _1, _2),
+						   std::bind(&NDNMib::onDeleteTimeout, this, _1));
+	m_face.processEvents();
+	return;
+}
+
 const uint8_t*
 NDNMib::read(ndn::Name& name, int& size)
 { 
 	ndn::Interest interest(name);
     interest.setInterestLifetime(m_interestLifetime);
-    interest.setMustBeFresh(false);
+    interest.setMustBeFresh(true);
     m_face.expressInterest(interest,
                            bind(&NDNMib::onData, this, _1, _2),
                            bind(&NDNMib::onTimeout, this, _1));
@@ -82,8 +110,9 @@ NDNMib::start()
 void 
 NDNMib::onInterest(const ndn::Name& prefix,
 				const ndn::Interest& interest,
-				const shared_ptr<ndn::Data> data)
+				shared_ptr<ndn::Data> data)
 {
+	data->setName(interest.getName());
 	m_face.put(*data);
 	m_isFinished = true;
 }
@@ -99,8 +128,6 @@ NDNMib::onData(const ndn::Interest& interest, const ndn::Data& data)
 void
 NDNMib::onTimeout(const ndn::Interest& interest)
 {
-	//release signal for read
-	std::cout<<"onTimeout"<<interest.getName()<<std::endl;
 }
 
 void 
@@ -113,11 +140,13 @@ void
 NDNMib::startInsertCommand()
 {
 	repo::RepoCommandParameter parameters;
-	parameters.setName(m_dataPrefix);
-	
+	ndn::Name dataPrefix = ndn::Name(m_dataPrefix).appendNumber(random::generateWord64());
+	parameters.setName(dataPrefix);
+
 	ndn::Interest commandInterest(ndn::Name(m_nmibRepoPrefix).append("insert").append(parameters.wireEncode()));
-	
 	commandInterest.setInterestLifetime(m_interestLifetime);
+	commandInterest.setMustBeFresh(true);
+
 	m_keyChain.sign(commandInterest);
 	m_face.expressInterest(commandInterest,
 						   std::bind(&NDNMib::onInsertCommandResponse, this, _1, _2),
@@ -144,6 +173,29 @@ NDNMib::onInsertCommandTimeout(const ndn::Interest& interest)
 {
 
 }
+
+void
+NDNMib::onDeleteData(const ndn::Interest& interest, ndn::Data& data)
+{
+	repo::RepoCommandResponse response;
+	response.wireDecode(data.getContent().blockFromValue());
+	int statusCode = response.getStatusCode();
+	m_scheduler.scheduleEvent(m_checkPeriod,
+							  std::bind(&NDNMib::startCheckDelete, this, interest));
+}
+
+void 
+NDNMib::onDeleteTimeout(const ndn::Interest& interest)
+{
+}
+
+void
+NDNMib::startCheckDelete(const ndn::Interest& interest)
+{
+
+}
+
+
 void
 NDNMib::startCheckCommand()
 {
@@ -162,20 +214,20 @@ void
 NDNMib::onCheckCommandResponse(const ndn::Interest& interest, ndn::Data& data)
 {
 	repo::RepoCommandResponse response(data.getContent().blockFromValue());
+	
 	int statusCode = response.getStatusCode();
-	if (statusCode >= 400)
+	if(m_isFinished)
 	{
-		//error
-	}
-
-	if (m_isFinished) 
-	{
-		uint64_t insertCount = response.getInsertNum();
+		int insertCount = response.getInsertNum();
 		if(insertCount == 1)
 		{
 			m_face.getIoService().stop();
 			return;
 		}
+	}
+	if (statusCode >= 400)
+	{
+		//error
 	}
 	m_scheduler.scheduleEvent(m_checkPeriod,
                            std::bind(&NDNMib::startCheckCommand, this));

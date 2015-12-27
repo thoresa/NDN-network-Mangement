@@ -25,7 +25,8 @@ public:
 
 	ChunkType(string name):
 	localNDNMibName(name)
-	{}
+	{
+	}
 
 	ChunkType(ndn::Name name, vector<ndn::Name> cacheNodes):
 	m_manageName(name),
@@ -49,8 +50,13 @@ public:
 	virtual void collectInfoForChunk(NameType&, string& name, void*){};
 	virtual std::shared_ptr<nameType::BaseType>
 	queryInfoForChunk(NameType&, string& name, void*){return NULL;}
+	virtual void deleteInfoInMib(string& name)
+	{
+		ndn::Name deleteName = ndn::Name(name);
+		nmib::NDNMib ndnMib(localNDNMibName);
+		ndnMib.delt(deleteName);
+	}
 
-	virtual bool createChunk(){ return true;};
 	virtual bool updateChunk(){ return true;};
 	virtual bool deleteChunk(){ return true;};
 	virtual bool changeOwner(){ return true;};

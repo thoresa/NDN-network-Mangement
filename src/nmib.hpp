@@ -11,7 +11,7 @@
 #include <boost/asio.hpp>
 #include <semaphore.h>
 #include <ndn-cxx/util/scheduler.hpp>
-#define DEFAULT_FRESH_PERIOD 10000
+#define DEFAULT_FRESH_PERIOD 100
 #define DEFAULT_INTEREST_LIFETIME 4000
 #define DEFAULT_CHECK_PERIOD 1000
 namespace ndnManage
@@ -57,7 +57,7 @@ public:
 	
     const uint8_t* read(ndn::Name& name, int&);
 	void insert(ndn::Name&, const uint8_t*, int);
-	void delt(){}
+	void delt(ndn::Name&);
 	void update(){}
 	void notify(){}
 	void start();
@@ -75,6 +75,11 @@ private:
 	void startInsertCommand();
 	void onInsertCommandResponse(const ndn::Interest& interest, ndn::Data& data);
 	void onInsertCommandTimeout(const ndn::Interest& interest);
+	
+	void onDeleteData(const ndn::Interest& interest, ndn::Data& data);
+	void onDeleteTimeout(const ndn::Interest& interest);	
+	void startCheckDelete(const ndn::Interest& interest);
+
 	void startCheckCommand();
 	void onCheckCommandResponse(const ndn::Interest&, ndn::Data&);
 	void onCheckCommandTimeout(const ndn::Interest&);
