@@ -90,6 +90,27 @@ EndpointType::collectCpuRate(string& name, string filter)
 }
 
 
+void
+EndpointType::collectMemoryRate(string& name, string filter)
+{
+	try
+	{
+		float memoryRate = collectMemoryOccupyRate();
+		string memoryRateStr = std::to_string(memoryRate);
+
+		nmib::NDNMib ndnMib(localNDNMibName);
+		ndn::Name memoryRateName = ndn::Name(name);
+		int size = memoryRateStr.length();
+		const char* buf = memoryRateStr.c_str();	
+		ndnMib.insert(memoryRateName, reinterpret_cast<const uint8_t*>(buf), size);
+		
+	}
+	catch(std::exception& e)
+	{
+		std::cout<<e.what()<<std::endl;
+	}
+}
+
 nameType::CpuRateStruct
 EndpointType::queryCpuRate(string& name)
 {
@@ -105,6 +126,20 @@ EndpointType::queryCpuRate(string& name)
 	return cpurate;
 }
 
+nameType::MemoryRateStruct
+EndpointType::queryMemoryRate(string& name)
+{
+	ndn::Name queryName = ndn::Name(name);
+	nmib::NDNMib ndnMib;
+	int size;
+	const uint8_t* buf = ndnMib.read(queryName, size);
+
+	std::string memoryrateStr(reinterpret_cast<const char*>(buf));
+	nameType::MemoryRateStruct memoryrate;
+	memoryrate.setMemoryRate(atof(memoryrateStr.c_str()));
+	
+	return memoryrate;
+}
 
 nameType::FaceStatusStruct
 EndpointType::queryFaces(string& name)

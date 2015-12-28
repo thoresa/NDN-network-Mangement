@@ -29,10 +29,15 @@ int main(int argc, char** argv)
 		char* filter = "";
 		NameType nType;
 		nType.infoType = nameType::CPURATE;
+		string cpuratePrefix = prefix + "/cpurate";
+		string memoryratePrefix = prefix + "/memoryrate";
 		while(true)
 		{
-			type->collectInfoForChunk(nType, prefix, filter);
-			sleep(2);
+			nType.infoType = nameType::CPURATE;
+			type->collectInfoForChunk(nType, cpuratePrefix, filter);
+			nType.infoType = nameType::MEMORYRATE;
+			type->collectInfoForChunk(nType, memoryratePrefix, filter);
+			sleep(5);
 		}
 	}
 	else if(strcmp(argv[1], "delete") == 0)

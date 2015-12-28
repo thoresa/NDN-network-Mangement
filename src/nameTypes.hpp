@@ -26,6 +26,7 @@ enum INFORMATIONTYPES
 
 	//EndpointType
 	CPURATE,
+	MEMORYRATE,
 
 	HOSTINFO,
 	CHANNELS,
@@ -81,6 +82,29 @@ public:
 
 };
 
+struct MEMORYRATESTRUCT:public BASETYPE
+{
+private:
+	float m_memoryrate;
+public:
+	float getMemoryRate()
+	{
+		return m_memoryrate;
+	}
+	void setMemoryRate(float rate)
+	{
+		m_memoryrate = rate;		
+	}
+	const virtual std::string toString()
+	{
+		return std::to_string(getMemoryRate());
+	}
+	virtual string getElementByKey(int key=0)
+	{
+		return toString();
+	}
+
+};
 
 struct HOSTINFO:public BASETYPE
 {
@@ -190,6 +214,7 @@ struct FACESTATUSSTRUCT:public BASETYPE
 
 typedef struct BASETYPE BaseType;
 typedef struct CPURATESTRUCT CpuRateStruct;
+typedef struct MEMORYRATESTRUCT MemoryRateStruct;
 typedef struct FACESTATUSSTRUCT FaceStatusStruct;
 typedef struct HOSTINFO HostInfo;
 

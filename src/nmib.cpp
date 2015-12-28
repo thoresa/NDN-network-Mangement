@@ -162,6 +162,7 @@ NDNMib::onInsertCommandResponse(const ndn::Interest& interest, ndn::Data& data)
 	if(statusCode >= 400)
 	{
 		//error 
+		return;
 	}
 	m_processId = response.getProcessId();
 	m_scheduler.scheduleEvent(m_checkPeriod,
@@ -202,6 +203,7 @@ NDNMib::startCheckCommand()
 	try
 	{
 		repo::RepoCommandParameter parameters;
+
 		parameters.setProcessId(m_processId);
 
 		ndn::Interest checkInterest(ndn::Name(m_nmibRepoPrefix).append("insert check").append(parameters.wireEncode()));
@@ -212,9 +214,7 @@ NDNMib::startCheckCommand()
                          bind(&NDNMib::onCheckCommandTimeout, this, _1));
 	}
 	catch(std::exception& e)
-
 	{
-		std::cout<<e.what()<<std::endl;
 	}
 }
 
@@ -224,7 +224,13 @@ NDNMib::onCheckCommandResponse(const ndn::Interest& interest, ndn::Data& data)
 	repo::RepoCommandResponse response(data.getContent().blockFromValue());
 	
 	int statusCode = response.getStatusCode();
-	if(m_isFinished)
+
+	if (statusCode >= 400)
+	{
+		m_face.getIoService().stop();
+		return;
+	}
+	else if(m_isFinished)
 	{
 		int insertCount = response.getInsertNum();
 		if(insertCount == 1)
@@ -232,10 +238,6 @@ NDNMib::onCheckCommandResponse(const ndn::Interest& interest, ndn::Data& data)
 			m_face.getIoService().stop();
 			return;
 		}
-	}
-	if (statusCode >= 400)
-	{
-		//error
 	}
 	m_scheduler.scheduleEvent(m_checkPeriod,
                            std::bind(&NDNMib::startCheckCommand, this));

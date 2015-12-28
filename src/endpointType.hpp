@@ -32,6 +32,9 @@ public:
 			case nameType::CPURATE:
 				this->collectCpuRate(name, static_cast<char*>(args));	
 				break;
+			case nameType::MEMORYRATE:
+				this->collectMemoryRate(name, static_cast<char*>(args));	
+				break;
 
 			case nameType::HOSTINFO:
 				this->collectHostInfo(name, static_cast<char*>(args));	
@@ -65,8 +68,10 @@ public:
 		switch(nameType.infoType)
 		{
 			case nameType::CPURATE:
-//				name = name+"/cpurate";
 				result = std::make_shared<nameType::CpuRateStruct>(this->queryCpuRate(name));
+				break;
+			case nameType::MEMORYRATE:
+				result = std::make_shared<nameType::MemoryRateStruct>(this->queryMemoryRate(name));
 				break;
 			case nameType::HOSTINFO:
 				result = std::make_shared<nameType::HostInfo>(this->queryHostInfo(name));
@@ -104,6 +109,9 @@ private:
 	
 	void collectCpuRate(string& name, string args);
 	nameType::CpuRateStruct queryCpuRate(string& name);
+	
+	void collectMemoryRate(string& name, string args);
+	nameType::MemoryRateStruct queryMemoryRate(string& name);
 
 	void onData(const ndn::Interest& interest, ndn::Data& data);
 	void onTimeout(const ndn::Interest& interest);
