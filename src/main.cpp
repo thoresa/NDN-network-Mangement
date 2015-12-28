@@ -29,8 +29,11 @@ int main(int argc, char** argv)
 		char* filter = "";
 		NameType nType;
 		nType.infoType = nameType::CPURATE;
-		std::cout<<"collect data name: "<<prefix<<std::endl;
-		type->collectInfoForChunk(nType, prefix, filter);
+		while(true)
+		{
+			type->collectInfoForChunk(nType, prefix, filter);
+			sleep(2);
+		}
 	}
 	else if(strcmp(argv[1], "delete") == 0)
 	{

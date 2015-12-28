@@ -35,7 +35,6 @@ public:
 	onInterest(const Name& name, const Interest& interest)
 	{
 		string infoName = interest.getName().toUri().substr(interest.getName().toUri().find("/ndn/manage/"));
-		std::cout<<infoName<<std::endl;
 		chunkType::ChunkType* type = chunkType::typeFactory::createType(chunkType::ENDPOINTTYPE, "/example/repo/1");
 		
 		char* filter = "";
@@ -43,7 +42,6 @@ public:
 		nType.infoType = nameType::CPURATE;
 	    shared_ptr<BaseType> information = type->queryInfoForChunk(nType, infoName, filter);
 		string cpurate = information->getElementByKey();
-		std::cout<<"cpurate:"<<cpurate<<std::endl;
 		
 		Name dataName(interest.getName());
 		dataName
@@ -53,10 +51,10 @@ public:
 		int size;
 	    size = cpurate.length();
 		shared_ptr<Data> data = make_shared<Data>(dataName);
-	    data->setFreshnessPeriod(time::milliseconds(1000)); // 10 sec
+	    data->setFreshnessPeriod(time::milliseconds(1000)); 
 		data->setContent(reinterpret_cast<const uint8_t*>(cpurate.c_str()), size);
 
-	    m_keyChain.signWithSha256(*data);
+	    m_keyChain.sign(*data);
 
 		m_face.put(*data);
 	}	

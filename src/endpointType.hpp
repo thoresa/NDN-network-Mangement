@@ -30,20 +30,16 @@ public:
 		switch(nameType.infoType)
 		{
 			case nameType::CPURATE:
-				name = name+"/cpurate";
-				std::cout<<name<<std::endl;
 				this->collectCpuRate(name, static_cast<char*>(args));	
 				break;
 
 			case nameType::HOSTINFO:
-				name = name+"/hostinfo";
 				this->collectHostInfo(name, static_cast<char*>(args));	
 				break;
 
 			case nameType::CHANNELS:
 				break;
 			case nameType::FACES:
-				name = name+"/faces";
 				this->collectFaces(name, static_cast<char*>(args));
 				break;
 			case nameType::FIB:

@@ -25,18 +25,16 @@ def build(bld):
 				cflags=['-W', '-lboost_serialization'],
 				)
 
-#		bld(features=['cxx', 'cxxprogram'],
-#				source=bld.path.ant_glob('main.cpp'),
-#				target="nmib",
-#				use='nmib-objects',
-#				cflags=['-W', ['-lboost_serialization']],
-#				)
+		bld(features=['cxx', 'cxxprogram'],
+				source=bld.path.ant_glob('main.cpp', excl=['networkManageServer.cpp']),
+				target="nmib",
+				use='nmib-objects',
+				cflags=['-W', ['-lboost_serialization']],
+				)
 		
 		bld(features=['cxx', 'cxxprogram'],
-			#	source=bld.path.ant_glob('networkManageServer.cpp'),
-			#	target="networkManageServer",
-				source=bld.path.ant_glob('main.cpp'),
-				target="nmib",
+				source=bld.path.ant_glob('networkManageServer.cpp', excl=['main.cpp']),
+				target="networkManageServer",
 				use='nmib-objects',
 				cflags=['-W', ['-lboost_serialization']],
 				)

@@ -13,7 +13,7 @@
 #include <ndn-cxx/util/scheduler.hpp>
 #define DEFAULT_FRESH_PERIOD 100
 #define DEFAULT_INTEREST_LIFETIME 4000
-#define DEFAULT_CHECK_PERIOD 1000
+#define DEFAULT_CHECK_PERIOD 500
 namespace ndnManage
 {
 namespace nmib

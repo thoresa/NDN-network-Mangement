@@ -199,15 +199,23 @@ NDNMib::startCheckDelete(const ndn::Interest& interest)
 void
 NDNMib::startCheckCommand()
 {
-	repo::RepoCommandParameter parameters;
-	parameters.setProcessId(m_processId);
+	try
+	{
+		repo::RepoCommandParameter parameters;
+		parameters.setProcessId(m_processId);
 
-	ndn::Interest checkInterest(ndn::Name(m_nmibRepoPrefix).append("insert check").append(parameters.wireEncode()));
-	checkInterest.setInterestLifetime(m_interestLifetime);
-	m_keyChain.sign(checkInterest);
-	m_face.expressInterest(checkInterest,
+		ndn::Interest checkInterest(ndn::Name(m_nmibRepoPrefix).append("insert check").append(parameters.wireEncode()));
+		checkInterest.setInterestLifetime(m_interestLifetime);
+		m_keyChain.sign(checkInterest);
+		m_face.expressInterest(checkInterest,
                          bind(&NDNMib::onCheckCommandResponse, this, _1, _2),
                          bind(&NDNMib::onCheckCommandTimeout, this, _1));
+	}
+	catch(std::exception& e)
+
+	{
+		std::cout<<e.what()<<std::endl;
+	}
 }
 
 void
