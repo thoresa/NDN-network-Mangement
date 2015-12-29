@@ -213,8 +213,8 @@ collectIOBandwidth()
 		}
 		net.close();
 		
-		int interval = 5;
-		sleep(5);
+		int interval = 1;
+		sleep(1);
 		
 		net.open(path);
 		getline(net, buffer);

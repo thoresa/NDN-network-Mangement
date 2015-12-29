@@ -35,7 +35,9 @@ public:
 			case nameType::MEMORYRATE:
 				this->collectMemoryRate(name, static_cast<char*>(args));	
 				break;
-
+			case nameType::IOBANDWIDTH:
+				this->collectIOBandwidthOccupy(name, static_cast<char*>(args));
+				break;
 			case nameType::HOSTINFO:
 				this->collectHostInfo(name, static_cast<char*>(args));	
 				break;
@@ -72,6 +74,9 @@ public:
 				break;
 			case nameType::MEMORYRATE:
 				result = std::make_shared<nameType::MemoryRateStruct>(this->queryMemoryRate(name));
+				break;
+			case nameType::IOBANDWIDTH:
+				result = std::make_shared<nameType::IOBandwidthStruct>(this->queryIOBandwidth(name));
 				break;
 			case nameType::HOSTINFO:
 				result = std::make_shared<nameType::HostInfo>(this->queryHostInfo(name));
@@ -112,6 +117,9 @@ private:
 	
 	void collectMemoryRate(string& name, string args);
 	nameType::MemoryRateStruct queryMemoryRate(string& name);
+	
+	void collectIOBandwidthOccupy(string& name, string args);
+	nameType::IOBandwidthStruct queryIOBandwidth(string& name);
 
 	void onData(const ndn::Interest& interest, ndn::Data& data);
 	void onTimeout(const ndn::Interest& interest);

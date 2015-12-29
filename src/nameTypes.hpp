@@ -27,6 +27,7 @@ enum INFORMATIONTYPES
 	//EndpointType
 	CPURATE,
 	MEMORYRATE,
+	IOBANDWIDTH,
 
 	HOSTINFO,
 	CHANNELS,
@@ -98,6 +99,30 @@ public:
 	const virtual std::string toString()
 	{
 		return std::to_string(getMemoryRate());
+	}
+	virtual string getElementByKey(int key=0)
+	{
+		return toString();
+	}
+
+};
+
+struct IOBANDWIDTHSTRUCT:public BASETYPE
+{
+private:
+	int m_iobandwidth;
+public:
+	int getIOBandwidth()
+	{
+		return m_iobandwidth;
+	}
+	void setIOBandth(int iobandwidth)
+	{
+		m_iobandwidth = iobandwidth;		
+	}
+	const virtual std::string toString()
+	{
+		return std::to_string(getIOBandwidth());
 	}
 	virtual string getElementByKey(int key=0)
 	{
@@ -215,6 +240,7 @@ struct FACESTATUSSTRUCT:public BASETYPE
 typedef struct BASETYPE BaseType;
 typedef struct CPURATESTRUCT CpuRateStruct;
 typedef struct MEMORYRATESTRUCT MemoryRateStruct;
+typedef struct IOBANDWIDTHSTRUCT IOBandwidthStruct;
 typedef struct FACESTATUSSTRUCT FaceStatusStruct;
 typedef struct HOSTINFO HostInfo;
 

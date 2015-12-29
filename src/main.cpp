@@ -31,12 +31,16 @@ int main(int argc, char** argv)
 		nType.infoType = nameType::CPURATE;
 		string cpuratePrefix = prefix + "/cpurate";
 		string memoryratePrefix = prefix + "/memoryrate";
+		string iobandwidthPrefix = prefix + "/iobandwidth";
+
 		while(true)
 		{
 			nType.infoType = nameType::CPURATE;
 			type->collectInfoForChunk(nType, cpuratePrefix, filter);
 			nType.infoType = nameType::MEMORYRATE;
 			type->collectInfoForChunk(nType, memoryratePrefix, filter);
+			nType.infoType = nameType::IOBANDWIDTH;
+			type->collectInfoForChunk(nType, iobandwidthPrefix, filter);
 			sleep(5);
 		}
 	}

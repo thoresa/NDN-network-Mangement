@@ -39,13 +39,15 @@ public:
 		
 		char* filter = "";
 		NameType nType;
-		std::cout<<interest.getName()<<std::endl;
 		if(interest.getName().toUri().find("/cpurate") != std::string::npos)
 		{
 			nType.infoType = nameType::CPURATE;
 		}else if(interest.getName().toUri().find("/memoryrate") != std::string::npos)
 		{
 			nType.infoType = nameType::MEMORYRATE;
+		}else if(interest.getName().toUri().find("/iobandwidth") != std::string::npos)
+		{
+			nType.infoType = nameType::IOBANDWIDTH;
 		}
 	    shared_ptr<BaseType> information = type->queryInfoForChunk(nType, infoName, filter);
 		string cpurate = information->getElementByKey();

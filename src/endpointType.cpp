@@ -89,6 +89,29 @@ EndpointType::collectCpuRate(string& name, string filter)
 	}
 }
 
+void
+EndpointType::collectIOBandwidthOccupy(string& name, string filter)
+{
+	try
+	{
+		std::map<string, int> IOBandwidth = collectIOBandwidth();
+	
+		for(std::map<string, int>::iterator iter = IOBandwidth.begin(); iter!=IOBandwidth.end(); iter++)
+		{
+			nmib::NDNMib ndnMib(localNDNMibName);
+			string iobandwidthStr = std::to_string(iter->second);
+			string ethNameStr = name + "/" +iter->first;
+			ndn::Name ethName = ndn::Name(ethNameStr);
+			int size = iobandwidthStr.length();
+			const char* buf = iobandwidthStr.c_str();	
+			ndnMib.insert(ethName, reinterpret_cast<const uint8_t*>(buf), size);
+		}
+	}
+	catch(std::exception& e)
+	{
+		std::cout<<e.what()<<std::endl;
+	}
+}
 
 void
 EndpointType::collectMemoryRate(string& name, string filter)
@@ -141,6 +164,20 @@ EndpointType::queryMemoryRate(string& name)
 	return memoryrate;
 }
 
+nameType::IOBandwidthStruct
+EndpointType::queryIOBandwidth(string& name)
+{
+	ndn::Name queryName = ndn::Name(name);
+	nmib::NDNMib ndnMib;
+	int size;
+	const uint8_t* buf = ndnMib.read(queryName, size);
+
+	std::string IOBandwidthStr(reinterpret_cast<const char*>(buf));
+	nameType::IOBandwidthStruct iobandwidth;
+	iobandwidth.setIOBandth(atoi(IOBandwidthStr.c_str()));
+	
+	return iobandwidth;
+}
 nameType::FaceStatusStruct
 EndpointType::queryFaces(string& name)
 {
